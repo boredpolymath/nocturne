@@ -27,6 +27,7 @@ Thumbs.db
 
 # Promotional Trailer (large binary, distributed separately)
 assets/nocturne-trailer.mp4
+assets/youtube-thumbnail.jpg
 
 # Development & Security Checklist Documentation (kept local / untracked)
 /docs/
