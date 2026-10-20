@@ -16,7 +16,7 @@ jobs:
     name: Cargo Audit, Cargo Deny & Air-Gap Verification
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust Stable Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -77,7 +77,7 @@ jobs:
             is_windows: false
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Linux System Dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -112,7 +112,7 @@ jobs:
           }
 
       - name: Upload Deliverable Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: deliverable-${{ matrix.target }}
           path: |
@@ -129,10 +129,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download All Deliverables
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: deliverable-*
           path: dist
