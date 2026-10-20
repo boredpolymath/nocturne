@@ -4,6 +4,10 @@
   "description": "Zero-egress local IPC capability set for the Nocturne Séance Panel",
   "windows": ["seance-panel"],
   "permissions": [
-    "core:default"
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-hide",
+    "core:window:allow-close",
+    "core:window:allow-minimize"
   ]
 }

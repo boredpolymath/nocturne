@@ -56,7 +56,9 @@ body {
   font-size: 12px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   user-select: none;
@@ -118,31 +120,64 @@ body::after {
    ========================================================================== */
 .window-titlebar {
   height: 36px;
+  flex-shrink: 0;
   background-color: #090a0d;
   border-bottom: 1px solid #181b22;
   display: flex;
   align-items: center;
   padding: 0 14px;
   gap: 14px;
+  position: relative;
+  z-index: 30;
 }
 
 .window-controls {
   display: flex;
-  gap: 5px;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 50;
+  -webkit-app-region: no-drag;
 }
 
 .win-dot-box {
-  width: 11px;
-  height: 11px;
-  border: 1px solid #2a2f3a;
-  background: #111419;
-  color: #6b7280;
-  font-size: 9px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #2e3442;
+  background: #13171e;
+  color: #8b93a4;
+  font-size: 12px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 2px;
+  border-radius: 3px;
   line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+#win-close-btn:hover {
+  border-color: var(--red);
+  color: var(--red-bright);
+  background: #2b1215;
+}
+
+#win-hide-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber-bright);
+  background: #281e10;
+}
+
+.titlebar-drag-region {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: default;
 }
 
 .brand-badge {
@@ -179,19 +214,45 @@ body::after {
 }
 
 /* ==========================================================================
-   MAIN CHASSIS SHELL
+   MAIN CHASSIS SHELL (SCROLLABLE VIEWPORT)
    ========================================================================== */
 .viewport-shell {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   padding: 18px 20px 28px;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+}
+
+.viewport-shell::-webkit-scrollbar {
+  width: 10px;
+}
+
+.viewport-shell::-webkit-scrollbar-track {
+  background: #08090c;
+  border-left: 1px solid #181c24;
+}
+
+.viewport-shell::-webkit-scrollbar-thumb {
+  background: #252b37;
+  border-radius: 5px;
+  border: 2px solid #08090c;
+}
+
+.viewport-shell::-webkit-scrollbar-thumb:hover {
+  background: var(--amber);
 }
 
 .chassis-frame {
   position: relative;
   width: 100%;
   max-width: 1240px;
+  height: max-content;
   background: var(--bg-chassis);
   border: 1px solid #222630;
   border-radius: 6px;
@@ -364,6 +425,23 @@ body::after {
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 10px rgba(216, 150, 56, 0.45);
+}
+
+.rocker-switch[aria-checked="false"] .rocker-off {
+  height: 100%;
+  background: #222631;
+  color: var(--text-primary);
+  font-weight: 800;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rocker-switch[aria-checked="false"] .rocker-on {
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
 }
 
 /* ==========================================================================
@@ -1271,6 +1349,7 @@ body::after {
 
 .window-footer {
   height: 30px;
+  flex-shrink: 0;
   background: #08090c;
   border-top: 1px solid #181c24;
   padding: 0 18px;

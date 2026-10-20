@@ -1,0 +1,27 @@
+# Project Nocturne (MK-IV) — Target Compiler & Linker Security Hardening
+# Section 4.6: Windows CFG/ASLR/CET, macOS Hardened Runtime PIE, Linux Full RELRO
+
+[target.x86_64-pc-windows-msvc]
+rustflags = [
+    "-C", "control-flow-guard=checks",
+    "-C", "link-arg=/DYNAMICBASE",
+    "-C", "link-arg=/HIGHENTROPYVA",
+    "-C", "link-arg=/NXCOMPAT",
+    "-C", "link-arg=/CETCOMPAT",
+]
+
+[target.aarch64-apple-darwin]
+rustflags = [
+    "-C", "link-arg=-Wl,-dead_strip",
+]
+
+[target.x86_64-apple-darwin]
+rustflags = [
+    "-C", "link-arg=-Wl,-dead_strip",
+]
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-Wl,-z,relro,-z,now",
+    "-C", "link-arg=-Wl,-z,noexecstack",
+]

@@ -1,0 +1,380 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "nocturne-daemon",
+      "version": "1.0.4",
+      "description": "Project Nocturne (MK-IV) \u2014 Ambient Workstation Poltergeist Daemon"
+    },
+    "properties": [
+      {
+        "name": "nocturne:security:airgap",
+        "value": "ZERO-EGRESS-AIR-GAP"
+      },
+      {
+        "name": "nocturne:macos:hardened-runtime",
+        "value": "true"
+      },
+      {
+        "name": "nocturne:windows:cfg-aslr",
+        "value": "DYNAMICBASE,HIGHENTROPYVA,CFG"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "tauri",
+      "version": "2.0.0",
+      "purl": "pkg:cargo/tauri@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0 OR MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tauri-build",
+      "version": "2.0.0",
+      "purl": "pkg:cargo/tauri-build@2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0 OR MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "serde",
+      "version": "1.0",
+      "purl": "pkg:cargo/serde@1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT OR Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "serde_json",
+      "version": "1.0",
+      "purl": "pkg:cargo/serde_json@1.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT OR Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cpal",
+      "version": "0.15",
+      "purl": "pkg:cargo/cpal@0.15",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "rusqlite",
+      "version": "0.31",
+      "purl": "pkg:cargo/rusqlite@0.31",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "sysinfo",
+      "version": "0.30",
+      "purl": "pkg:cargo/sysinfo@0.30",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": ".cargo/config.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d2c550b878eec76a53b09732c7a1b47832c01b93ea5aac0ac2aef04476ded5b0"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Cargo.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "800efac51872ccd9f4672c9470bea046d7c638fb3b6bdf75a53f0d601a8e1bbc"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "deny.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "73b92e35f62c8e2308f8dbf4c33fb794f4d44ba2659bef754b5120fc1f016d58"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "package.json",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "abdaf99b39f6a949a8a1c9ca743fe11d7ce4baf66f839ac4e2e8c8b21ab5af84"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "rust-toolchain.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "469b5cc291f06fa6d419c85b5ebd6aeacbd293cde945db6525893f00ebd125d9"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "rustfmt.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "49caeff6df520115fe9a6ea1c0c19b0e52eb063ba25579be56b70240da19d588"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/Cargo.toml",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b00e4f9867c8e91bfe1b7efe8aa6020bd11b0379af99dc0fbcf26bf9a395bd2c"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/Entitlements.plist",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dfbfa500056dda67b5981652f9165c48ea35817880c6241f5009d42a11cdd49d"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/build.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "188d69b30828139e897f18a1fbaac1430ca634a77d14cd2ba35a88340d6bbbc0"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/capabilities/default.json",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3a13d82ad151d089280ddb7b85638b821a67fd1ed89b2e3bac2352eae903696b"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/nocturne-airgap.sb",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d5de2ff6cb5f2b2185015583ebe938e1bb6f6f1363be09e7575cba3d1c47aee5"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/audio/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b2b9d9965621808f52f051c78eb948534d1b63e0927aa615d2c21e812d99b282"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/db/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e9691aa30ebdd995240f7d32bcf44a5de079c5a471435b04a225d00e48481199"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/display/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d03aeded3407cef6c91cc3d6fde1bf75997b720758469b237c01721713a2900d"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/ipc/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1f416bb7ee82785a6a31ce0a8bc12f646df8e601176892f21e7b419052bb7a90"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/lib.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4e7883d820b9a3643b61b88c2c6ca8efe9b026047925db5aea9572118e40732e"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/main.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "87835438fe004129a691317d2fd31e95759bdb9e3a5ea04d7e0d6ad4cefb0a65"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/panic/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a217bfef54f3f3cc420fc44c7fef9e3fc119544f32359232871f24310efda7bb"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/security/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e19ab638ebb4e12f56672c636d7cba68659907c5744e22effe770f392c220f72"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/telemetry/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5cc006f046be8cd6cb817fb90b588f052a7929c76808f46d64aaf2ab5d944446"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/telemetry/profiler.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "eaedcfc173cf89fffc8b81b4cfae0953286e8d187062147fdc0b0c92b535a2e2"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/src/tray/mod.rs",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a50038ee67342dfa69aaf63f27373fe4213eda3d53377b18d85ab31239000aac"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src-tauri/tauri.conf.json",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "06493050f84b36531ea8dd6c91b26714fc288e70cfe1d8d3973208527a0ec4a7"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src/index.html",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "250660609a67966471f2c569c514cca500b5df9ba1465bb9c2658d996b197bcb"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src/js/app.js",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c3f602645ecd32cb40409e909dd44765a1ee8b19e314dace8c10137182d66f1b"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "src/styles/main.css",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e73573cf2b97d0a774b1cc3ea04ba57c2b12a99e92ad4708cfc51fcd3dc4c76c"
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'"
+  />
   <title>NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT</title>
   <link rel="stylesheet" href="styles/main.css" />
 </head>
@@ -10,19 +14,21 @@
   <!-- Top Window Titlebar -->
   <header class="window-titlebar">
     <div class="window-controls">
-      <span class="win-dot-box">·</span>
-      <span class="win-dot-box">·</span>
+      <button type="button" class="win-dot-box" id="win-close-btn" title="Close &amp; Terminate Nocturne Daemon (Cmd+Q)" aria-label="Terminate Nocturne Daemon">&times;</button>
+      <button type="button" class="win-dot-box" id="win-hide-btn" title="Minimize / Hide Séance Panel to System Tray (Cmd+W)" aria-label="Hide to System Tray">&minus;</button>
     </div>
-    <div class="brand-badge">
-      <svg class="brand-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <rect x="2" y="5" width="12" height="9" rx="1.5" stroke="#d4943a" stroke-width="1.4" />
-        <path d="M5 5L8 2L11 5" stroke="#d4943a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
-        <circle cx="10.5" cy="9.5" r="1.5" fill="#d4943a" />
-        <line x1="4.5" y1="8" x2="7.5" y2="8" stroke="#d4943a" stroke-width="1.2" />
-        <line x1="4.5" y1="10.8" x2="7.5" y2="10.8" stroke="#d4943a" stroke-width="1.2" />
-      </svg>
-      <span class="brand-title">NOCTURNE</span>
-      <span class="brand-tag">MK-IV</span>
+    <div class="titlebar-drag-region" data-tauri-drag-region>
+      <div class="brand-badge" data-tauri-drag-region>
+        <svg class="brand-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="2" y="5" width="12" height="9" rx="1.5" stroke="#d4943a" stroke-width="1.4" />
+          <path d="M5 5L8 2L11 5" stroke="#d4943a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="10.5" cy="9.5" r="1.5" fill="#d4943a" />
+          <line x1="4.5" y1="8" x2="7.5" y2="8" stroke="#d4943a" stroke-width="1.2" />
+          <line x1="4.5" y1="10.8" x2="7.5" y2="10.8" stroke="#d4943a" stroke-width="1.2" />
+        </svg>
+        <span class="brand-title">NOCTURNE</span>
+        <span class="brand-tag">MK-IV</span>
+      </div>
     </div>
   </header>
 
@@ -53,11 +59,11 @@
 
           <div class="unit-telemetry-meta">
             <div class="meta-row">
-              <span>DAEMON MEM: <strong class="text-white">28.4 MB RESIDENT</strong></span>
+              <span>DAEMON MEM: <strong class="text-white" id="daemon-mem-readout">28.4 MB RESIDENT</strong></span>
               <span class="meta-sep">|</span>
               <span>AUDIO CORE: <strong class="text-amber">RAW CPAL RINGBUFFER</strong></span>
               <span class="meta-sep">|</span>
-              <span>TELEMETRY: <strong class="text-white">ZERO NET EGRESS (0 KB/s)</strong></span>
+              <span>TELEMETRY: <strong class="text-white" id="net-egress-readout">ZERO NET EGRESS (0 KB/s)</strong></span>
               <span class="meta-sep">|</span>
             </div>
             <div class="meta-row">
@@ -72,10 +78,10 @@
             <div class="power-label">MAIN POWER /</div>
             <div class="power-label">SURVEILLANCE</div>
             <div class="power-status">
-              <span class="dot dot-amber-glow"></span>
-              <span>BOUND &amp; LISTENING</span>
+              <span class="dot dot-amber-glow" id="power-status-dot"></span>
+              <span id="power-status-text">BOUND &amp; LISTENING</span>
             </div>
-            <div class="power-sublabel">RELAY 12V COIL ENGAGED</div>
+            <div class="power-sublabel" id="power-sublabel">RELAY 12V COIL ENGAGED</div>
           </div>
           <div class="rocker-switch" id="main-power-switch" role="switch" aria-checked="true" tabindex="0">
             <span class="rocker-off">O</span>
@@ -101,7 +107,7 @@
               </div>
               <div class="panel-header-right">
                 <span class="header-meta-label">CH: 01-EMF</span>
-                <span class="badge-tag badge-amber">CAL: 50-60Hz</span>
+                <span class="badge-tag badge-amber" id="cal-pulse-btn" title="Dispatch 50-60Hz Calibration Carrier &amp; Test Intervention" style="cursor: pointer;">CAL: 50-60Hz</span>
               </div>
             </header>
 
@@ -114,8 +120,8 @@
                 </div>
                 <div class="emf-crt-value" id="emf-readout">02.87</div>
                 <div class="emf-crt-bottom">
-                  <span class="text-green">REM-POD: ACTIVE</span>
-                  <span class="text-amber">DRIFT: +0.14 mG</span>
+                  <span class="text-green" id="rem-pod-status">REM-POD: ACTIVE</span>
+                  <span class="text-amber" id="emf-drift-readout">DRIFT: +0.14 mG</span>
                 </div>
               </div>
 
@@ -179,9 +185,9 @@
                 <h2 class="panel-title">WITCHING HOUR VIGIL CHRONOMETER</h2>
               </div>
               <div class="panel-header-right">
-                <span class="badge-tag badge-amber-pill">
-                  <span class="dot dot-amber"></span>
-                  CURFEW ENGAGED
+                <span class="badge-tag badge-amber-pill" id="curfew-toggle-btn" title="Click to toggle Curfew Time-Gate enforcement" style="cursor: pointer;">
+                  <span class="dot dot-amber" id="curfew-dot"></span>
+                  <span id="curfew-status-text">CURFEW ENGAGED</span>
                 </span>
               </div>
             </header>
@@ -192,18 +198,18 @@
 
             <div class="chrono-labels-row">
               <span class="chrono-marker">00:00 [MIDNIGHT STRIKE]</span>
-              <span class="badge-tag badge-amber-dark">VIGIL BRACKET: 00:00 - 05:00</span>
+              <span class="badge-tag badge-amber-dark" id="vigil-bracket-badge">VIGIL BRACKET: 00:00 - 05:00</span>
               <div class="chrono-right-markers">
                 <span>12:00</span>
                 <span>23:59</span>
               </div>
             </div>
 
-            <div class="chrono-timeline-track">
-              <div class="chrono-active-window">
-                <span class="window-time">00:00</span>
+            <div class="chrono-timeline-track" id="chrono-track" title="Click or drag along 24h timeline to adjust vigil end time (15-min increments)" style="cursor: ew-resize;">
+              <div class="chrono-active-window" id="chrono-active-window">
+                <span class="window-time" id="vigil-start-label">00:00</span>
                 <span class="window-divider"></span>
-                <span class="window-time">05:00</span>
+                <span class="window-time" id="vigil-end-label">05:00</span>
               </div>
               <div class="chrono-ticks">
                 <span></span>
@@ -225,8 +231,8 @@
                 <strong class="station-clock" id="station-clock">02:41:18 AM</strong>
               </div>
               <div class="chrono-actions">
-                <button type="button" class="btn-console">SET BRACKET</button>
-                <button type="button" class="btn-console">NTP SYNC</button>
+                <button type="button" class="btn-console" id="btn-set-bracket">SET BRACKET</button>
+                <button type="button" class="btn-console" id="btn-ntp-sync">NTP SYNC</button>
               </div>
             </div>
           </article>
@@ -246,7 +252,7 @@
                 <h2 class="panel-title">PROCEDURAL INTERVENTION ENGINES</h2>
               </div>
               <div class="panel-header-right">
-                <span class="badge-tag badge-amber">3 CHANNELS READY</span>
+                <span class="badge-tag badge-amber" id="channels-ready-badge">3 CHANNELS READY</span>
               </div>
             </header>
 
@@ -421,7 +427,7 @@
             <!-- Oscilloscope Canvas Box -->
             <div class="crt-scope-container">
               <canvas id="evp-spectrograph-canvas" width="520" height="220"></canvas>
-              <div class="crt-hud-top-right">&Delta; 0.041 mV / -44.2 dBFS</div>
+              <div class="crt-hud-top-right" id="crt-hud-metrics">&Delta; 0.041 mV / -44.2 dBFS</div>
               <div class="crt-hud-bottom-left">SWEEP: 48.0 kHz &middot; BINAURAL &middot; RAW PCM</div>
             </div>
 
@@ -429,20 +435,20 @@
             <div class="spectro-metrics-row">
               <div class="spectro-metric-box">
                 <span class="spectro-metric-label">LAST LULL EVENT</span>
-                <strong class="spectro-metric-val text-green">06.2s</strong>
+                <strong class="spectro-metric-val text-green" id="metric-last-lull">06.2s</strong>
               </div>
               <div class="spectro-metric-box">
                 <span class="spectro-metric-label">GAMMA DRIFT</span>
-                <strong class="spectro-metric-val text-green">00.0%</strong>
+                <strong class="spectro-metric-val text-green" id="metric-gamma-drift">00.0%</strong>
               </div>
               <div class="spectro-metric-box">
                 <span class="spectro-metric-label">NEXT PROBABILITY</span>
-                <strong class="spectro-metric-val text-amber">14m 20s</strong>
+                <strong class="spectro-metric-val text-amber" id="metric-next-prob">14m 20s</strong>
               </div>
             </div>
 
             <!-- 3 Event Log Lines -->
-            <div class="spectro-log-list">
+            <div class="spectro-log-list" id="spectro-log-list">
               <div class="spectro-log-item">
                 <span class="log-left"><span class="log-ts">[02:39:12]</span> <span class="text-cyan-green">REM_POD_CARRIER_SYNC</span></span>
                 <span class="log-right text-green">LOCKED [0x48A]</span>
@@ -480,8 +486,8 @@
                   <span>COLD SPOT SENSOR</span>
                   <span class="dot dot-cyan"></span>
                 </div>
-                <div class="gauge-value text-cyan">18.2&deg;C</div>
-                <div class="gauge-sub text-cyan">&lowast; &Delta; -4.1&deg;C DIP DETECTED</div>
+                <div class="gauge-value text-cyan" id="gauge-cold-spot">18.2&deg;C</div>
+                <div class="gauge-sub text-cyan" id="gauge-cold-dip">&lowast; &Delta; -4.1&deg;C DIP DETECTED</div>
               </div>
 
               <!-- Gamma Modulation -->
@@ -490,7 +496,7 @@
                   <span>GAMMA MODULATION</span>
                   <span class="text-amber">CUBIC-BEZIER</span>
                 </div>
-                <div class="gauge-value text-amber">07.8%</div>
+                <div class="gauge-value text-amber" id="gauge-gamma-mod">07.8%</div>
                 <div class="gauge-sub text-muted">CLAMP: MAX &le; 8.0% LUMINANCE</div>
               </div>
             </div>
@@ -537,7 +543,7 @@
             </button>
 
             <div class="exorcise-footer">
-              <span class="relay-ready">
+              <span class="relay-ready" id="relay-contact-status">
                 <span class="dot dot-green"></span>
                 RELAY CONTACT: SEVER READY
               </span>
@@ -552,10 +558,10 @@
                 <path d="M8 2L3 4.2V7.8C3 11.1 5.1 13.9 8 14.8C10.9 13.9 13 11.1 13 7.8V4.2L8 2Z" stroke="currentColor" stroke-width="1.3" />
                 <path d="M6 8.2L7.4 9.6L10.2 6.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-              <span>RUST CRATE MEMORY: <strong class="text-white">0 PANICS</strong></span>
+              <span>RUST CRATE MEMORY: <strong class="text-white" id="rust-panics-readout">0 PANICS</strong></span>
             </div>
-            <div class="rust-status-mid">PID: 8192 [DAEMON]</div>
-            <div class="rust-status-right">RING: <span class="text-amber">0xDEADBEEF</span></div>
+            <div class="rust-status-mid" id="daemon-pid-readout">PID: 8192 [DAEMON]</div>
+            <div class="rust-status-right">RING: <span class="text-amber" id="ring-sentinel-readout">0xDEADBEEF</span></div>
           </div>
         </div>
       </div>
@@ -574,7 +580,7 @@
       <span>DAEMON BUILD: v1.0.4-RELEASE</span>
     </div>
     <div class="footer-right">
-      <span>SIGNAL BUFFER: <strong class="text-green">ARMED</strong></span>
+      <span>SIGNAL BUFFER: <strong class="text-green" id="footer-signal-buffer">ARMED</strong></span>
       <span class="footer-sep">|</span>
       <span>GROUND: <strong class="text-white">0.04% LEAK</strong></span>
       <span class="footer-sep">|</span>

@@ -12,7 +12,9 @@
     "build:windows-x64": "tauri build --target x86_64-pc-windows-msvc",
     "build:linux-x64": "tauri build --target x86_64-unknown-linux-gnu",
     "lint:rust": "cargo clippy --workspace --all-targets -- -D warnings",
-    "fmt:rust": "cargo fmt --all -- --check"
+    "fmt:rust": "cargo fmt --all -- --check",
+    "audit:supply-chain": "cargo audit && cargo deny check advisories bans licenses sources",
+    "release:integrity": "python3 scripts/generate_release_integrity.py"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

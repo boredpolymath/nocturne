@@ -1,0 +1,8 @@
+;; Project Nocturne (MK-IV) — macOS Seatbelt Air-Gap Profile
+;; Strictly denies all inbound and outbound IPv4/IPv6 network socket operations.
+(version 1)
+(allow default)
+(deny network*)
+(deny network-outbound)
+(deny network-inbound)
+(deny network-bind)

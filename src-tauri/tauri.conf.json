@@ -13,20 +13,17 @@
       {
         "label": "seance-panel",
         "title": "NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT",
-        "width": 1280,
-        "height": 1580,
+        "width": 1240,
+        "height": 820,
+        "minWidth": 960,
+        "minHeight": 580,
+        "center": true,
         "resizable": true,
         "decorations": false,
         "transparent": false,
         "visible": true
       }
     ],
-    "trayIcon": {
-      "id": "nocturne-tray",
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": true,
-      "tooltip": "NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT"
-    },
     "security": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'"
     }
@@ -44,9 +41,13 @@
     ],
     "macOS": {
       "minimumSystemVersion": "11.0",
-      "hardenedRuntime": true
+      "hardenedRuntime": true,
+      "entitlements": "./Entitlements.plist",
+      "signingIdentity": null
     },
     "windows": {
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
       "webviewInstallMode": {
         "type": "offlineInstaller"
       }

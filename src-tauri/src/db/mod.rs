@@ -241,7 +241,40 @@ impl LocalPersistenceStore {
         let app_dir = resolve_app_data_dir()?;
         ensure_secure_directory(&app_dir)?;
         let db_path = app_dir.join(DB_FILENAME);
-        Self::init_at_path(&db_path)
+        let store = Self::init_at_path(&db_path)?;
+        if store.get_recent_incidents(1)?.is_empty() {
+            let _ = store.record_incident(&NewIncidentRecord {
+                timestamp_utc: "02:39:12".to_string(),
+                trigger_category: "REM_POD_CARRIER_SYNC".to_string(),
+                intensity_detent: 1,
+                milligauss_reading: 2.87,
+                lull_duration_ms: 0,
+                cpu_temp_c: 18.2,
+                gamma_delta_pct: 0.0,
+                suppressed_flag: false,
+            });
+            let _ = store.record_incident(&NewIncidentRecord {
+                timestamp_utc: "02:40:04".to_string(),
+                trigger_category: "EVP CADENCE DETECTED: 7.2s LULL".to_string(),
+                intensity_detent: 1,
+                milligauss_reading: 2.87,
+                lull_duration_ms: 7200,
+                cpu_temp_c: 18.2,
+                gamma_delta_pct: 0.0,
+                suppressed_flag: true,
+            });
+            let _ = store.record_incident(&NewIncidentRecord {
+                timestamp_utc: "02:41:02".to_string(),
+                trigger_category: "AMBIENT_ACOUSTIC_FLOOR".to_string(),
+                intensity_detent: 1,
+                milligauss_reading: 1.50,
+                lull_duration_ms: 0,
+                cpu_temp_c: 18.2,
+                gamma_delta_pct: 0.0,
+                suppressed_flag: false,
+            });
+        }
+        Ok(store)
     }
 
     /// Initializes the SQLite database in WAL mode at an explicit filesystem path.
