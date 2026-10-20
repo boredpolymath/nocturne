@@ -97,15 +97,20 @@ jobs:
         if: matrix.is_windows
         shell: pwsh
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npx tauri build --target ${{ matrix.target }} --bundles msi,nsis
-          Get-ChildItem -Path "target\${{ matrix.target }}\release\bundle\msi\*.msi" | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination $_.Name -Force
-            Copy-Item -Path $_.FullName -Destination "nocturne-windows-x64.msi" -Force
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $msiFiles = Get-ChildItem -Path "target", "src-tauri\target" -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
+          if (-not $msiFiles) { Write-Error "No MSI installer found"; exit 1 }
+          foreach ($f in $msiFiles) {
+            Copy-Item -Path $f.FullName -Destination $f.Name -Force
+            Copy-Item -Path $f.FullName -Destination "nocturne-windows-x64.msi" -Force
           }
-          Get-ChildItem -Path "target\${{ matrix.target }}\release\bundle\nsis\*-setup.exe" | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination $_.Name -Force
-            Copy-Item -Path $_.FullName -Destination "nocturne-windows-x64-setup.exe" -Force
+          $nsisFiles = Get-ChildItem -Path "target", "src-tauri\target" -Filter "*-setup.exe" -Recurse -ErrorAction SilentlyContinue
+          if (-not $nsisFiles) { Write-Error "No NSIS setup.exe installer found"; exit 1 }
+          foreach ($f in $nsisFiles) {
+            Copy-Item -Path $f.FullName -Destination $f.Name -Force
+            Copy-Item -Path $f.FullName -Destination "nocturne-windows-x64-setup.exe" -Force
           }
 
       - name: Package Deliverable (Unix)
