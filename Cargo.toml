@@ -7,6 +7,7 @@ version = "1.0.4"
 edition = "2021"
 rust-version = "1.77.2"
 authors = ["Project Nocturne Core Team"]
+license = "MIT OR Apache-2.0"
 
 [workspace.lints.rust]
 unsafe_op_in_unsafe_fn = "deny"

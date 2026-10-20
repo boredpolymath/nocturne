@@ -1,9 +1,13 @@
 //! Strongly typed Tauri IPC commands and event payloads for the Séance Panel.
 
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager, State};
+
+static MANIFESTATION_ROTATION: AtomicU64 = AtomicU64::new(0);
+static REDLINE_GLITCH_UNTIL_MS: AtomicU64 = AtomicU64::new(0);
 
 use crate::audio::CpalAcousticEngine;
 use crate::db::{IncidentAuditRecord, LocalPersistenceStore, NewIncidentRecord, ProfileConfig};
@@ -57,6 +61,9 @@ pub struct TelemetrySnapshot {
     pub airgap_audit: AirGapAuditReport,
     pub daemon_mem_mb: f32,
     pub pid: u32,
+    pub redline_glitch_active: bool,
+    pub color_shift_mode: u32,
+    pub color_shift_intensity: f32,
 }
 
 pub fn build_telemetry_snapshot(
@@ -108,44 +115,101 @@ pub fn build_telemetry_snapshot(
         .unwrap_or(&station_time)
         .to_string();
 
+    let now_mono_ms = exorcise.elapsed_monotonic_ms();
+
     // Dispatch procedural interventions during armed cognitive pauses
     if operational_state == DaemonOperationalState::BoundAndListening {
-        if profile.channel_acoustics {
-            if cadence_eval.phantom_keystroke_ready {
-                let t0 = std::time::Instant::now();
-                let _ = audio.dispatch_phantom_keystroke_echo(0.35);
-                telemetry.profiler().record_dispatch_latency(t0.elapsed());
+        let mut dispatched_category: Option<(String, f32)> = None;
 
-                let _ = store.record_incident(&NewIncidentRecord {
-                    timestamp_utc: short_ts.clone(),
-                    trigger_category: "PHANTOM_KEYSTROKE_ECHO: 2.5s HALT".to_string(),
-                    intensity_detent: profile.intensity_detent,
-                    milligauss_reading: 3.30,
-                    lull_duration_ms: cadence_eval.current_idle_ms as i64,
-                    cpu_temp_c: gauges.cold_spot_celsius,
-                    gamma_delta_pct: gauges.gamma_drift_pct,
-                    suppressed_flag: false,
-                });
-            }
-            if cadence_eval.lull_window_triggered {
+        if profile.channel_acoustics && cadence_eval.phantom_keystroke_ready {
+            let t0 = std::time::Instant::now();
+            let _ = audio.dispatch_phantom_keystroke_echo(0.35);
+            telemetry.profiler().record_dispatch_latency(t0.elapsed());
+
+            let _ = store.record_incident(&NewIncidentRecord {
+                timestamp_utc: short_ts.clone(),
+                trigger_category: "PHANTOM_KEYSTROKE_ECHO: 2.5s HALT".to_string(),
+                intensity_detent: profile.intensity_detent,
+                milligauss_reading: 3.30,
+                lull_duration_ms: cadence_eval.current_idle_ms as i64,
+                cpu_temp_c: gauges.cold_spot_celsius,
+                gamma_delta_pct: gauges.gamma_drift_pct,
+                suppressed_flag: false,
+            });
+        }
+
+        if cadence_eval.lull_window_triggered {
+            let mode = MANIFESTATION_ROTATION.fetch_add(1, Ordering::Relaxed) % 4;
+            let cpu_load_norm = ((gauges.cpu_tctl_celsius - 40.0) / 45.0).clamp(0.25, 1.0);
+
+            if profile.channel_acoustics {
                 let t0 = std::time::Instant::now();
-                let _ = audio.dispatch_spatial_creak(-0.45, profile.intensity_detent);
+                match mode {
+                    0 => {
+                        let _ = audio.dispatch_spatial_creak(-0.55, profile.intensity_detent);
+                        let _ = audio.dispatch_room_breath(cpu_load_norm);
+                        dispatched_category = Some((
+                            format!(
+                                "FLOORBOARD_CREAK & ROOM_BREATH: {:.1}s",
+                                cadence_eval.last_lull_sec
+                            ),
+                            8.4,
+                        ));
+                    }
+                    1 => {
+                        let _ = audio.dispatch_evp_whisper(0.65, profile.intensity_detent);
+                        let _ = audio.dispatch_room_breath(cpu_load_norm);
+                        dispatched_category = Some((
+                            format!(
+                                "EVP_SPIRIT_BOX_WHISPER: {:.1}s LULL",
+                                cadence_eval.last_lull_sec
+                            ),
+                            12.6,
+                        ));
+                    }
+                    2 => {
+                        let _ = audio.dispatch_wall_knock(-0.78, profile.intensity_detent);
+                        dispatched_category = Some((
+                            format!(
+                                "WALL_STUD_DOUBLE_KNOCK: {:.1}s LULL",
+                                cadence_eval.last_lull_sec
+                            ),
+                            15.2,
+                        ));
+                    }
+                    _ => {
+                        let _ = audio.dispatch_redline_hum();
+                        let _ = audio.dispatch_evp_whisper(-0.60, profile.intensity_detent);
+                        REDLINE_GLITCH_UNTIL_MS.store(now_mono_ms + 1_350, Ordering::Release);
+                        dispatched_category =
+                            Some(("REDLINE_20MG_SPIKE & 60HZ_HUM".to_string(), 23.4));
+                    }
+                }
                 telemetry.profiler().record_dispatch_latency(t0.elapsed());
             }
-        }
-        if profile.channel_gamma && cadence_eval.lull_window_triggered {
-            display.trigger_bezier_modulation_cycle();
-        }
-        if cadence_eval.lull_window_triggered {
+
+            if profile.channel_gamma {
+                display.trigger_bezier_modulation_cycle();
+                // Apply subtle 1-3px Planchette Cursor Micro-Drift on lull trigger
+                let _ = display.nudge_planchette_cursor(phase_rad);
+            }
+
             let suppressed = !profile.channel_acoustics && !profile.channel_gamma;
+            let (cat_label, mg_val) = dispatched_category.unwrap_or_else(|| {
+                (
+                    format!(
+                        "COLD_SPOT_BLUE_SHIFT & PLANCHETTE: {:.1}s",
+                        cadence_eval.last_lull_sec
+                    ),
+                    8.0,
+                )
+            });
+
             let _ = store.record_incident(&NewIncidentRecord {
                 timestamp_utc: short_ts,
-                trigger_category: format!(
-                    "EVP CADENCE DETECTED: {:.1}s LULL",
-                    cadence_eval.last_lull_sec
-                ),
+                trigger_category: cat_label,
                 intensity_detent: profile.intensity_detent,
-                milligauss_reading: 8.0,
+                milligauss_reading: mg_val,
                 lull_duration_ms: cadence_eval.current_idle_ms as i64,
                 cpu_temp_c: gauges.cold_spot_celsius,
                 gamma_delta_pct: if profile.channel_gamma {
@@ -156,15 +220,27 @@ pub fn build_telemetry_snapshot(
                 suppressed_flag: suppressed,
             });
         }
-        // Advance progressive 1,200ms cubic-bezier gamma interpolation on each 150ms sweep tick
+    }
+
+    if !is_dormant && profile.channel_gamma {
+        // Advance progressive 1,200ms cubic-bezier Full-Screen Spectral Color-Shift on each 150ms sweep tick
         gauges.gamma_drift_pct = display.tick_bezier_modulation();
-    } else if profile.channel_gamma && display.active_drift_pct() > 0.0 {
+    } else if display.active_drift_pct() > 0.0 {
         display.restore_default_gamma();
         gauges.gamma_drift_pct = 0.0;
     }
 
-    let emf =
+    let mut emf =
         telemetry.compute_emf_telemetry(&cadence_eval, profile.intensity_detent, operational_state);
+    let redline_glitch_active = !is_dormant
+        && (now_mono_ms < REDLINE_GLITCH_UNTIL_MS.load(Ordering::Acquire)
+            || emf.milligauss >= 20.0);
+    if redline_glitch_active && emf.milligauss < 22.4 {
+        emf.milligauss = 22.40;
+        emf.drift_mg = 6.85;
+        emf.led_states = [true, true, true, true, true];
+    }
+
     let next_probability_window = telemetry.compute_next_probability_window(
         &cadence_eval,
         &cadence_cfg,
@@ -178,6 +254,8 @@ pub fn build_telemetry_snapshot(
     let exorcise_status = exorcise.status_snapshot();
     let resource_budgets = telemetry.profiler().evaluate_budgets();
     let airgap_audit = AirGapEnforcer::new().audit_runtime_airgap();
+    let color_shift_mode = display.active_color_shift_mode();
+    let color_shift_intensity = display.active_color_shift_intensity();
 
     TelemetrySnapshot {
         milligauss: emf.milligauss,
@@ -218,6 +296,9 @@ pub fn build_telemetry_snapshot(
         airgap_audit,
         daemon_mem_mb: gauges.daemon_mem_mb,
         pid: std::process::id(),
+        redline_glitch_active,
+        color_shift_mode,
+        color_shift_intensity,
     }
 }
 
@@ -288,16 +369,43 @@ pub async fn trigger_calibration_pulse(
     exorcise.set_dormant_deep_sleep(false);
 
     let profile = store.load_profile_config().unwrap_or_default();
+    let mode = MANIFESTATION_ROTATION.fetch_add(1, Ordering::Relaxed) % 4;
+    let now_mono_ms = exorcise.elapsed_monotonic_ms();
+
+    let (trigger_category, milligauss_reading) = match mode {
+        0 => ("CAL_SPIRIT_BOX_FORMANT_WHISPER".to_string(), 12.8),
+        1 => ("CAL_WALL_STUD_DOUBLE_KNOCK".to_string(), 16.4),
+        2 => ("CAL_REDLINE_20MG_SPIKE_HUM".to_string(), 23.8),
+        _ => ("CAL_CREAK_AND_ROOM_BREATH".to_string(), 10.4),
+    };
+
     if profile.channel_acoustics {
         audio.set_armed(true);
         let t0 = std::time::Instant::now();
-        let _ = audio.dispatch_spatial_creak(-0.35, profile.intensity_detent);
-        let _ = audio.dispatch_sub_perceptual_carrier(21.0, 0.35);
+        match mode {
+            0 => {
+                let _ = audio.dispatch_evp_whisper(0.60, profile.intensity_detent);
+                let _ = audio.dispatch_room_breath(0.65);
+            }
+            1 => {
+                let _ = audio.dispatch_wall_knock(-0.75, profile.intensity_detent);
+            }
+            2 => {
+                let _ = audio.dispatch_redline_hum();
+                let _ = audio.dispatch_evp_whisper(-0.55, profile.intensity_detent);
+                REDLINE_GLITCH_UNTIL_MS.store(now_mono_ms + 1_350, Ordering::Release);
+            }
+            _ => {
+                let _ = audio.dispatch_spatial_creak(-0.45, profile.intensity_detent);
+                let _ = audio.dispatch_room_breath(0.55);
+            }
+        }
         telemetry.profiler().record_dispatch_latency(t0.elapsed());
     }
     if profile.channel_gamma {
         display.set_enabled(true);
         display.trigger_bezier_modulation_cycle();
+        let _ = display.nudge_planchette_cursor((now_mono_ms as f32 / 150.0) * 0.35);
     }
 
     let (_, station_time) = telemetry.query_local_station_time();
@@ -309,9 +417,9 @@ pub async fn trigger_calibration_pulse(
 
     store.record_incident(&NewIncidentRecord {
         timestamp_utc: short_ts,
-        trigger_category: "CAL_50_60HZ_CARRIER_PULSE".to_string(),
+        trigger_category,
         intensity_detent: profile.intensity_detent,
-        milligauss_reading: 10.4,
+        milligauss_reading,
         lull_duration_ms: 0,
         cpu_temp_c: 18.2,
         gamma_delta_pct: if profile.channel_gamma {

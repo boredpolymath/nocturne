@@ -73,6 +73,36 @@ impl GammaLutSnapshot {
         }
         out
     }
+
+    /// Computes a full-screen Spectral Phase-Shift transfer table across `0.0% ..= 8.0%` control range.
+    /// Normalizes `delta_pct` into `intensity in [0.0, 1.0]` and applies a dramatic, unmistakable
+    /// full-screen hardware LUT color transformation:
+    /// - `mode == 0`: Ectoplasmic Cyan-Violet Phase Inversion (crushes red, inverts/floods cyan & ultraviolet)
+    /// - `mode == 1`: Crimson Nightmare Solarization (inverts shadows into blood-crimson, crushes green/blue)
+    pub fn with_chromatic_cold_spot_shift(&self, delta_pct: f32, mode: u32) -> Self {
+        let clamped_pct = delta_pct.clamp(0.0, MAX_LUMINANCE_CLAMP_PCT);
+        let t = (clamped_pct / MAX_LUMINANCE_CLAMP_PCT).clamp(0.0, 1.0);
+
+        let mut out = self.clone();
+        for i in 0..GAMMA_LUT_SIZE {
+            let r = self.red[i].clamp(0.0, 1.0);
+            let g = self.green[i].clamp(0.0, 1.0);
+            let b = self.blue[i].clamp(0.0, 1.0);
+
+            if (mode & 1) == 0 {
+                // Mode 0: Ectoplasmic Cyan-Violet Phase Inversion
+                out.red[i] = (r * (1.0 - 0.92 * t) + (1.0 - r) * (0.18 * t)).clamp(0.0, 1.0);
+                out.green[i] = (g * (1.0 - 0.55 * t) + (1.0 - g) * (0.78 * t)).clamp(0.0, 1.0);
+                out.blue[i] = (b * (1.0 - 0.25 * t) + (1.0 - b) * (0.92 * t)).clamp(0.0, 1.0);
+            } else {
+                // Mode 1: Crimson Nightmare Solarization
+                out.red[i] = (r * (1.0 - 0.20 * t) + (1.0 - r) * (0.90 * t)).clamp(0.0, 1.0);
+                out.green[i] = (g * (1.0 - 0.94 * t) + (1.0 - g) * (0.12 * t)).clamp(0.0, 1.0);
+                out.blue[i] = (b * (1.0 - 0.90 * t) + (1.0 - b) * (0.22 * t)).clamp(0.0, 1.0);
+            }
+        }
+        out
+    }
 }
 
 /// Evaluates a parametric cubic-bezier curve `B(t)` with control points `P0=(0,0)`,
@@ -150,6 +180,7 @@ pub struct DisplayGammaController {
     enabled: AtomicBool,
     configured_modulation_bits: AtomicU32,
     active_drift_bits: AtomicU32,
+    color_shift_mode: AtomicU32,
     active_cycle_start: Mutex<Option<Instant>>,
     sys_monitor: Mutex<System>,
     components_monitor: Mutex<Components>,
@@ -174,6 +205,7 @@ impl DisplayGammaController {
             enabled: AtomicBool::new(true),
             configured_modulation_bits: AtomicU32::new(DEFAULT_GAMMA_MODULATION_PCT.to_bits()),
             active_drift_bits: AtomicU32::new(0.0_f32.to_bits()),
+            color_shift_mode: AtomicU32::new(0),
             active_cycle_start: Mutex::new(None),
             sys_monitor: Mutex::new(sys),
             components_monitor: Mutex::new(components),
@@ -210,8 +242,20 @@ impl DisplayGammaController {
         f32::from_bits(self.active_drift_bits.load(Ordering::Acquire))
     }
 
+    pub fn active_color_shift_mode(&self) -> u32 {
+        self.color_shift_mode.load(Ordering::Acquire) % 2
+    }
+
+    pub fn active_color_shift_intensity(&self) -> f32 {
+        if !self.is_enabled() {
+            return 0.0;
+        }
+        (self.active_drift_pct() / MAX_LUMINANCE_CLAMP_PCT).clamp(0.0, 1.0)
+    }
+
     /// Evaluates and applies a cubic-bezier interpolated gamma perturbation at `elapsed_ms`
-    /// across `>= 1,200ms`, strictly clamped to `<= 8.0%` luminance deviation.
+    /// across `>= 1,200ms`, applying a full-screen Spectral Phase-Shift (`with_chromatic_cold_spot_shift`)
+    /// to visibly transform display colors into Ectoplasmic Cyan-Violet or Blood-Crimson.
     pub fn apply_cubic_bezier_perturbation(&self, target_delta_pct: f32, elapsed_ms: u32) -> f32 {
         if !self.is_enabled() {
             return 0.0;
@@ -221,11 +265,30 @@ impl DisplayGammaController {
             elapsed_ms,
             self.interpolation_duration_ms,
         );
-        let perturbed_lut = self.baseline_lut.with_clamped_perturbation(delta_pct);
+        let mode = self.active_color_shift_mode();
+        let perturbed_lut = self
+            .baseline_lut
+            .with_chromatic_cold_spot_shift(delta_pct, mode);
         let _ = platform_gamma::apply_lut(&perturbed_lut);
         self.active_drift_bits
             .store(delta_pct.to_bits(), Ordering::Release);
         delta_pct
+    }
+
+    /// Nudges the OS mouse cursor by `1–3px` along a smooth Lissajous planchette arc
+    /// during deep idle pauses without resetting the OS inactivity timer.
+    pub fn nudge_planchette_cursor(&self, phase_rad: f32) -> (i32, i32) {
+        if !self.is_enabled() {
+            return (0, 0);
+        }
+        let dx = (phase_rad.cos() * 2.4).round() as i32;
+        let dy = ((phase_rad * 1.5).sin() * 2.4).round() as i32;
+        let clamped_dx = dx.clamp(-3, 3);
+        let clamped_dy = dy.clamp(-3, 3);
+        if clamped_dx != 0 || clamped_dy != 0 {
+            platform_gamma::nudge_cursor_by(clamped_dx, clamped_dy);
+        }
+        (clamped_dx, clamped_dy)
     }
 
     /// Starts a full progressive cubic-bezier gamma modulation cycle:
@@ -236,9 +299,15 @@ impl DisplayGammaController {
         if !self.is_enabled() {
             return;
         }
+        self.color_shift_mode.fetch_add(1, Ordering::AcqRel);
         if let Ok(mut guard) = self.active_cycle_start.lock() {
-            *guard = Some(Instant::now());
+            *guard = Some(
+                Instant::now()
+                    .checked_sub(std::time::Duration::from_millis(240))
+                    .unwrap_or_else(Instant::now),
+            );
         }
+        let _ = self.apply_cubic_bezier_perturbation(self.configured_modulation_pct(), 240);
     }
 
     /// Advances any active cubic-bezier gamma modulation cycle on the `150ms SWEEP` tick,
@@ -424,9 +493,33 @@ mod platform_gamma {
         }
     }
 
+    pub fn nudge_cursor_by(dx: i32, dy: i32) {
+        #[cfg(target_os = "macos")]
+        {
+            macos::nudge_cursor(dx, dy);
+        }
+        #[cfg(target_os = "windows")]
+        {
+            windows::nudge_cursor(dx, dy);
+        }
+        #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+        {
+            let _ = (dx, dy);
+        }
+    }
+
     #[cfg(target_os = "macos")]
     mod macos {
+        use std::ffi::c_void;
+
         use super::{GammaLutSnapshot, GAMMA_LUT_SIZE};
+
+        #[repr(C)]
+        #[derive(Clone, Copy)]
+        struct CGPoint {
+            x: f64,
+            y: f64,
+        }
 
         #[link(name = "CoreGraphics", kind = "framework")]
         extern "C" {
@@ -447,6 +540,35 @@ mod platform_gamma {
                 blue_table: *const f32,
             ) -> i32;
             fn CGDisplayRestoreColorSyncSettings();
+            fn CGEventCreate(source: *const c_void) -> *mut c_void;
+            fn CGEventGetLocation(event: *const c_void) -> CGPoint;
+            fn CGAssociateMouseAndMouseCursorPosition(connected: i32) -> i32;
+            fn CGWarpMouseCursorPosition(new_cursor_position: CGPoint) -> i32;
+        }
+
+        #[link(name = "CoreFoundation", kind = "framework")]
+        extern "C" {
+            fn CFRelease(cf: *const c_void);
+        }
+
+        pub fn nudge_cursor(dx: i32, dy: i32) {
+            // SAFETY: Queries current cursor coordinates via a transient read-only CGEvent,
+            // warps the cursor by `1..3px` with mouse-cursor association temporarily suspended
+            // so the OS idle timer is not reset, and releases the CGEvent.
+            unsafe {
+                let ev = CGEventCreate(std::ptr::null());
+                if !ev.is_null() {
+                    let pt = CGEventGetLocation(ev);
+                    CFRelease(ev);
+                    let next = CGPoint {
+                        x: (pt.x + f64::from(dx)).max(0.0),
+                        y: (pt.y + f64::from(dy)).max(0.0),
+                    };
+                    let _ = CGAssociateMouseAndMouseCursorPosition(0);
+                    let _ = CGWarpMouseCursorPosition(next);
+                    let _ = CGAssociateMouseAndMouseCursorPosition(1);
+                }
+            }
         }
 
         pub fn capture_lut() -> Result<GammaLutSnapshot, String> {
@@ -515,10 +637,28 @@ mod platform_gamma {
             blue: [u16; GAMMA_LUT_SIZE],
         }
 
+        #[repr(C)]
+        struct WinPoint {
+            x: i32,
+            y: i32,
+        }
+
         #[link(name = "user32")]
         extern "system" {
             fn GetDC(hwnd: *mut c_void) -> *mut c_void;
             fn ReleaseDC(hwnd: *mut c_void, hdc: *mut c_void) -> i32;
+            fn GetCursorPos(lp_point: *mut WinPoint) -> i32;
+            fn SetCursorPos(x: i32, y: i32) -> i32;
+        }
+
+        pub fn nudge_cursor(dx: i32, dy: i32) {
+            let mut pt = WinPoint { x: 0, y: 0 };
+            // SAFETY: Queries current cursor coordinates and applies a 1..3px delta.
+            unsafe {
+                if GetCursorPos(&mut pt as *mut WinPoint) != 0 {
+                    let _ = SetCursorPos((pt.x + dx).max(0), (pt.y + dy).max(0));
+                }
+            }
         }
 
         #[link(name = "gdi32")]
@@ -840,5 +980,29 @@ mod tests {
         assert_eq!(gauges.gamma_modulation_pct, 7.8);
         assert_eq!(gauges.sympathy_pitch_factor, 1.0);
         assert!(gauges.daemon_mem_mb <= 45.0);
+    }
+
+    #[test]
+    fn test_full_screen_spectral_color_shift_modes_are_perceptible() {
+        let baseline = GammaLutSnapshot::identity();
+
+        // Mode 0: Ectoplasmic Cyan-Violet Phase Inversion
+        let ecto = baseline.with_chromatic_cold_spot_shift(8.0, 0);
+        assert!(ecto.red[255] < 0.15, "Red highlight must be deeply crushed");
+        assert!(
+            ecto.blue[0] > 0.85,
+            "Blue shadows must invert into bright spectral cyan/violet"
+        );
+
+        // Mode 1: Crimson Nightmare Solarization
+        let crimson = baseline.with_chromatic_cold_spot_shift(8.0, 1);
+        assert!(
+            crimson.red[0] > 0.85,
+            "Red shadows must invert into bright blood-crimson"
+        );
+        assert!(
+            crimson.green[255] < 0.15,
+            "Green highlight must be deeply crushed"
+        );
     }
 }

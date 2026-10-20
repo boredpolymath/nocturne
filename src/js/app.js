@@ -100,17 +100,23 @@
    * Accepts either a phase offset (for calibrated display) or a 64-point
    * normalized PCM sweep array (`sweepSamples`) streamed from the Rust `cpal` engine.
    */
-  function renderSpectrograph(phaseOffset = 0.35, sweepSamples = null) {
+  function renderSpectrograph(
+    phaseOffset = 0.35,
+    sweepSamples = null,
+    redlineGlitchActive = false
+  ) {
     if (!canvas || !ctx) return;
     const w = canvas.width;
     const h = canvas.height;
 
-    // Clear CRT background
-    ctx.fillStyle = "#04120c";
+    // Clear CRT background (blood-crimson tint during 20+ mG redline glitch)
+    ctx.fillStyle = redlineGlitchActive ? "#180608" : "#04120c";
     ctx.fillRect(0, 0, w, h);
 
     // Draw minor grid lines
-    ctx.strokeStyle = "rgba(22, 92, 58, 0.25)";
+    ctx.strokeStyle = redlineGlitchActive
+      ? "rgba(145, 38, 44, 0.28)"
+      : "rgba(22, 92, 58, 0.25)";
     ctx.lineWidth = 1;
     const minorStep = 20;
     ctx.beginPath();
@@ -125,7 +131,9 @@
     ctx.stroke();
 
     // Draw major grid lines
-    ctx.strokeStyle = "rgba(34, 145, 92, 0.38)";
+    ctx.strokeStyle = redlineGlitchActive
+      ? "rgba(229, 83, 75, 0.45)"
+      : "rgba(34, 145, 92, 0.38)";
     ctx.lineWidth = 1;
     const majorStep = 80;
     ctx.beginPath();
@@ -139,17 +147,21 @@
     }
     ctx.stroke();
 
-    const ampScale = surveillanceBound ? 1.0 : 0.08;
+    const ampScale = surveillanceBound ? (redlineGlitchActive ? 1.55 : 1.0) : 0.08;
 
     const waveY = (x) => {
       const normX = x / w;
+      const glitchTear =
+        redlineGlitchActive && normX > 0.38 && normX < 0.64
+          ? Math.sin(normX * 140.0 + phaseOffset * 7.0) * 16.0
+          : 0.0;
       if (Array.isArray(sweepSamples) && sweepSamples.length > 1) {
         const scaledIdx = normX * (sweepSamples.length - 1);
         const i0 = Math.floor(scaledIdx);
         const i1 = Math.min(sweepSamples.length - 1, i0 + 1);
         const frac = scaledIdx - i0;
         const sample = sweepSamples[i0] * (1 - frac) + sweepSamples[i1] * frac;
-        return h * 0.54 - sample * 42.0 * ampScale;
+        return h * 0.54 - sample * 42.0 * ampScale + glitchTear;
       }
 
       const carrier =
@@ -158,14 +170,16 @@
           Math.cos(normX * Math.PI * 11.5 + phaseOffset * 1.2) * 4.5 +
           Math.sin(normX * Math.PI * 29.0) * 1.8) *
         ampScale;
-      return h * 0.54 - carrier;
+      return h * 0.54 - carrier + glitchTear;
     };
 
     // Outer phosphor bloom
     ctx.save();
-    ctx.strokeStyle = "rgba(35, 232, 138, 0.22)";
+    ctx.strokeStyle = redlineGlitchActive
+      ? "rgba(229, 83, 75, 0.28)"
+      : "rgba(35, 232, 138, 0.22)";
     ctx.lineWidth = 10;
-    ctx.shadowColor = "#23e88a";
+    ctx.shadowColor = redlineGlitchActive ? "#ff6459" : "#23e88a";
     ctx.shadowBlur = 18;
     ctx.beginPath();
     for (let x = 0; x <= w; x += 2) {
@@ -178,7 +192,9 @@
 
     // Secondary envelope band
     ctx.save();
-    ctx.strokeStyle = "rgba(44, 224, 145, 0.45)";
+    ctx.strokeStyle = redlineGlitchActive
+      ? "rgba(255, 100, 89, 0.52)"
+      : "rgba(44, 224, 145, 0.45)";
     ctx.lineWidth = 4;
     ctx.beginPath();
     for (let x = 0; x <= w; x += 2) {
@@ -191,9 +207,9 @@
 
     // Core bright CRT trace
     ctx.save();
-    ctx.strokeStyle = "#5bffb0";
+    ctx.strokeStyle = redlineGlitchActive ? "#ff8a80" : "#5bffb0";
     ctx.lineWidth = 1.8;
-    ctx.shadowColor = "#2ce091";
+    ctx.shadowColor = redlineGlitchActive ? "#ff6459" : "#2ce091";
     ctx.shadowBlur = 8;
     ctx.beginPath();
     for (let x = 0; x <= w; x += 1) {
@@ -627,10 +643,14 @@
     }
     if (Array.isArray(snap.spectrograph_sweep)) {
       sweepPhase = (sweepPhase + 0.18) % (Math.PI * 2);
-      renderSpectrograph(sweepPhase, snap.spectrograph_sweep);
+      renderSpectrograph(
+        sweepPhase,
+        snap.spectrograph_sweep,
+        Boolean(snap.redline_glitch_active)
+      );
     }
 
-    // 7. Thermocouple & Optical Gauges
+    // 7. Thermocouple & Optical Gauges + Full-Viewport Spectral Color-Shift Filter
     if (gaugeColdSpotEl && typeof snap.cold_spot_celsius === "number") {
       gaugeColdSpotEl.innerHTML = `${snap.cold_spot_celsius.toFixed(1)}&deg;C`;
     }
@@ -639,6 +659,32 @@
     }
     if (gaugeGammaModEl && typeof snap.gamma_modulation_pct === "number") {
       gaugeGammaModEl.textContent = `${snap.gamma_modulation_pct.toFixed(1).padStart(4, "0")}%`;
+    }
+
+    const shiftIntensity =
+      typeof snap.color_shift_intensity === "number"
+        ? Math.max(0.0, Math.min(1.0, snap.color_shift_intensity))
+        : 0.0;
+    const shiftMode = typeof snap.color_shift_mode === "number" ? snap.color_shift_mode % 2 : 0;
+    if (shiftIntensity > 0.01 && !isDormant && snap.channel_gamma) {
+      if (shiftMode === 0) {
+        // Mode 0: Ectoplasmic Cyan-Violet Phase Inversion
+        const hue = (shiftIntensity * 175.0).toFixed(1);
+        const inv = (shiftIntensity * 0.88).toFixed(2);
+        const sat = (1.0 + shiftIntensity * 2.2).toFixed(2);
+        const con = (1.0 + shiftIntensity * 0.35).toFixed(2);
+        document.body.style.filter = `hue-rotate(${hue}deg) invert(${inv}) saturate(${sat}) contrast(${con})`;
+      } else {
+        // Mode 1: Crimson Nightmare Solarization
+        const hue = (-shiftIntensity * 65.0).toFixed(1);
+        const inv = (shiftIntensity * 0.86).toFixed(2);
+        const sep = (shiftIntensity * 0.82).toFixed(2);
+        const sat = (1.0 + shiftIntensity * 2.8).toFixed(2);
+        const con = (1.0 + shiftIntensity * 0.45).toFixed(2);
+        document.body.style.filter = `hue-rotate(${hue}deg) invert(${inv}) sepia(${sep}) saturate(${sat}) contrast(${con})`;
+      }
+    } else if (document.body.style.filter) {
+      document.body.style.filter = "";
     }
 
     // 8. Rust Status Bar
@@ -835,6 +881,7 @@
 
   // 7. Execute Emergency Exorcise Purge UI & IPC State Reset
   async function executeUiExorcisePurge(sourceCommand) {
+    document.body.style.filter = "";
     setPowerUiState(false);
     if (emfReadoutEl) {
       emfReadoutEl.textContent = "01.50";

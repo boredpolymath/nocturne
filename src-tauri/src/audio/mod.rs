@@ -254,6 +254,18 @@ pub fn apply_hard_decibel_limiter(sample: f32, ceiling_linear: f32) -> f32 {
 pub mod synthesis {
     use super::*;
 
+    fn compute_binaural_pan_and_itd(pan_position: f32) -> (f32, f32, usize, usize) {
+        let pan = pan_position.clamp(-1.0, 1.0);
+        let angle = (pan + 1.0) * 0.5 * FRAC_PI_2;
+        let gain_left = angle.cos();
+        let gain_right = angle.sin();
+        let itd_samples =
+            ((pan.abs() * MAX_ITD_DELAY_SEC) * SAMPLE_RATE_HZ as f32).round() as usize;
+        let delay_left = if pan > 0.0 { itd_samples } else { 0 };
+        let delay_right = if pan < 0.0 { itd_samples } else { 0 };
+        (gain_left, gain_right, delay_left, delay_right)
+    }
+
     /// Synthesizes a spatial binaural sub-floor creak using stick-slip modal resonance (`42–185 Hz`),
     /// equal-power stereo panning (`pan` in `[-1.0, 1.0]`), wood-head ITD micro-delays,
     /// and thermal sympathy pitch scaling (`pitch_factor` in `[0.90, 1.10]`).
@@ -404,6 +416,226 @@ pub mod synthesis {
             stereo.push(apply_hard_decibel_limiter(sample_r, ceiling_lin));
         }
 
+        stereo
+    }
+
+    /// Synthesizes an EVP Spirit-Box Formant Whisper (`420ms` breathy vocal-tract formant sweep
+    /// across F1/F2/F3 resonators with a faint AM heterodyne radio carrier whistle).
+    pub fn synthesize_evp_formant_whisper(
+        pan_position: f32,
+        intensity_detent: u8,
+        peak_cap_db: f32,
+        pitch_factor: f32,
+    ) -> Vec<f32> {
+        let duration_sec = 0.42_f32;
+        let total_frames = (SAMPLE_RATE_HZ as f32 * duration_sec) as usize;
+        let ceiling_lin = compute_clamped_ceiling_linear(peak_cap_db);
+        let pitch = pitch_factor.clamp(0.90, 1.10);
+        let detent_scale = match intensity_detent {
+            1 => 0.55,
+            2 => 0.78,
+            3 => 1.0,
+            _ => 0.55,
+        };
+
+        let (gain_l, gain_r, delay_l, delay_r) = compute_binaural_pan_and_itd(pan_position);
+        let mut mono = Vec::with_capacity(total_frames);
+        let mut lfsr: u32 = 0x9E37_79B9;
+        let mut bp1_z1 = 0.0_f32;
+        let mut bp1_z2 = 0.0_f32;
+        let mut bp2_z1 = 0.0_f32;
+        let mut bp2_z2 = 0.0_f32;
+
+        for i in 0..total_frames {
+            let t = i as f32 / SAMPLE_RATE_HZ as f32;
+            let progress = i as f32 / total_frames as f32;
+
+            // Deterministic xorshift noise excitation
+            lfsr ^= lfsr << 13;
+            lfsr ^= lfsr >> 17;
+            lfsr ^= lfsr << 5;
+            let white = ((lfsr & 0xFFFF) as f32 / 32768.0) - 1.0;
+
+            // Two-syllable breathy envelope ("hh-ah... shh")
+            let syl_env = (progress * PI).sin() * (0.65 + 0.35 * (TAU * 4.2 * t).sin());
+
+            // Sweeping vocal tract formants F1 (420 -> 610 Hz) and F2 (1280 -> 1720 Hz)
+            let f1 = (420.0 + 190.0 * (progress * PI).sin()) * pitch;
+            let f2 = (1720.0 - 440.0 * progress) * pitch;
+
+            let w1 = TAU * f1 / SAMPLE_RATE_HZ as f32;
+            let r1 = 0.965_f32;
+            let y1 = white * (1.0 - r1) + 2.0 * r1 * w1.cos() * bp1_z1 - r1 * r1 * bp1_z2;
+            bp1_z2 = bp1_z1;
+            bp1_z1 = y1;
+
+            let w2 = TAU * f2 / SAMPLE_RATE_HZ as f32;
+            let r2 = 0.955_f32;
+            let y2 = white * (1.0 - r2) + 2.0 * r2 * w2.cos() * bp2_z1 - r2 * r2 * bp2_z2;
+            bp2_z2 = bp2_z1;
+            bp2_z1 = y2;
+
+            // Faint AM spirit-box heterodyne sweep (1480 Hz -> 920 Hz)
+            let hetero_freq = (1480.0 - 560.0 * progress) * pitch;
+            let heterodyne = (TAU * hetero_freq * t).sin() * 0.14;
+
+            let aspiration = white * 0.18;
+            let raw = (y1 * 0.52 + y2 * 0.36 + aspiration + heterodyne) * syl_env;
+            mono.push((raw * 1.6).tanh() * ceiling_lin * detent_scale);
+        }
+
+        let mut stereo = Vec::with_capacity(total_frames * CHANNELS);
+        for i in 0..total_frames {
+            let s_l = if i >= delay_l {
+                mono[i - delay_l] * gain_l
+            } else {
+                0.0
+            };
+            let s_r = if i >= delay_r {
+                mono[i - delay_r] * gain_r
+            } else {
+                0.0
+            };
+            stereo.push(apply_hard_decibel_limiter(s_l, ceiling_lin));
+            stereo.push(apply_hard_decibel_limiter(s_r, ceiling_lin));
+        }
+        stereo
+    }
+
+    /// Synthesizes a spatialized Wall-Stud Double-Knock (`0ms` and `185ms` cavity impacts at
+    /// `92 Hz`/`196 Hz` preceded by a `3.8 kHz` electromagnetic reed-relay click).
+    pub fn synthesize_wall_stud_double_knock(
+        pan_position: f32,
+        intensity_detent: u8,
+        peak_cap_db: f32,
+        pitch_factor: f32,
+    ) -> Vec<f32> {
+        let duration_sec = 0.38_f32;
+        let total_frames = (SAMPLE_RATE_HZ as f32 * duration_sec) as usize;
+        let second_knock_frame = (SAMPLE_RATE_HZ as f32 * 0.185) as usize;
+        let ceiling_lin = compute_clamped_ceiling_linear(peak_cap_db);
+        let pitch = pitch_factor.clamp(0.90, 1.10);
+        let detent_scale = match intensity_detent {
+            1 => 0.62,
+            2 => 0.84,
+            3 => 1.0,
+            _ => 0.62,
+        };
+
+        let (gain_l, gain_r, delay_l, delay_r) = compute_binaural_pan_and_itd(pan_position);
+        let mut mono = Vec::with_capacity(total_frames);
+
+        for i in 0..total_frames {
+            let t1 = i as f32 / SAMPLE_RATE_HZ as f32;
+
+            // Electromagnetic reed-relay click precursor in first 3ms
+            let relay_click = if t1 < 0.003 {
+                (-t1 * 1100.0).exp() * (TAU * 3800.0 * pitch * t1).sin() * 0.45
+            } else {
+                0.0
+            };
+
+            // First drywall/stud cavity impact at t = 0
+            let env1 = (-t1 * 28.0).exp();
+            let knock1 = ((TAU * 92.0 * pitch * t1).sin() * 0.65
+                + (TAU * 196.0 * pitch * t1).sin() * 0.25
+                + (TAU * 540.0 * pitch * t1).sin() * (-t1 * 140.0).exp() * 0.30)
+                * env1;
+
+            // Second firmer stud impact at t = 185ms
+            let knock2 = if i >= second_knock_frame {
+                let t2 = (i - second_knock_frame) as f32 / SAMPLE_RATE_HZ as f32;
+                let env2 = (-t2 * 24.0).exp();
+                ((TAU * 88.0 * pitch * t2).sin() * 0.72
+                    + (TAU * 184.0 * pitch * t2).sin() * 0.28
+                    + (TAU * 490.0 * pitch * t2).sin() * (-t2 * 130.0).exp() * 0.35)
+                    * env2
+            } else {
+                0.0
+            };
+
+            let combined = (relay_click + knock1 + knock2).clamp(-1.0, 1.0);
+            mono.push(combined * ceiling_lin * detent_scale);
+        }
+
+        let mut stereo = Vec::with_capacity(total_frames * CHANNELS);
+        for i in 0..total_frames {
+            let s_l = if i >= delay_l {
+                mono[i - delay_l] * gain_l
+            } else {
+                0.0
+            };
+            let s_r = if i >= delay_r {
+                mono[i - delay_r] * gain_r
+            } else {
+                0.0
+            };
+            stereo.push(apply_hard_decibel_limiter(s_l, ceiling_lin));
+            stereo.push(apply_hard_decibel_limiter(s_r, ceiling_lin));
+        }
+        stereo
+    }
+
+    /// Synthesizes a `20+ mG` Redline `60 Hz` Mains Hum & CRT Transformer Buzz (`260ms`).
+    pub fn synthesize_redline_mains_hum(peak_cap_db: f32) -> Vec<f32> {
+        let duration_sec = 0.26_f32;
+        let total_frames = (SAMPLE_RATE_HZ as f32 * duration_sec) as usize;
+        let ceiling_lin = compute_clamped_ceiling_linear(peak_cap_db);
+        let mut stereo = Vec::with_capacity(total_frames * CHANNELS);
+
+        for i in 0..total_frames {
+            let t = i as f32 / SAMPLE_RATE_HZ as f32;
+            let progress = i as f32 / total_frames as f32;
+            let env = (progress * PI).sin();
+
+            let hum_60 = (TAU * 60.0 * t).sin() * 0.55;
+            let hum_120 = (TAU * 120.0 * t).sin() * 0.28;
+            let buzz_180 = (TAU * 180.0 * t).sin() * 0.14;
+            let corona_2400 = (TAU * 2400.0 * t).sin() * (TAU * 60.0 * t).cos() * 0.08;
+
+            let sig = (hum_60 + hum_120 + buzz_180 + corona_2400) * env * ceiling_lin * 0.90;
+            stereo.push(apply_hard_decibel_limiter(sig, ceiling_lin));
+            stereo.push(apply_hard_decibel_limiter(-sig * 0.92, ceiling_lin));
+        }
+        stereo
+    }
+
+    /// Synthesizes an Infrasonic "Room Breath" (`18–24 Hz` carrier coupled with a `42 Hz`
+    /// sub-bass pressure exhalation modulated by live CPU load).
+    pub fn synthesize_infrasonic_room_breath(
+        cpu_load_norm: f32,
+        peak_cap_db: f32,
+        pitch_factor: f32,
+    ) -> Vec<f32> {
+        let duration_sec = 0.55_f32;
+        let total_frames = (SAMPLE_RATE_HZ as f32 * duration_sec) as usize;
+        let ceiling_lin = compute_clamped_ceiling_linear(peak_cap_db);
+        let load = cpu_load_norm.clamp(0.15, 1.0);
+        let pitch = pitch_factor.clamp(0.90, 1.10);
+
+        let f_infra = (19.5 + 4.0 * load) * pitch;
+        let f_sub = (41.0 + 9.0 * load) * pitch;
+
+        let mut stereo = Vec::with_capacity(total_frames * CHANNELS);
+        for i in 0..total_frames {
+            let t = i as f32 / SAMPLE_RATE_HZ as f32;
+            let progress = i as f32 / total_frames as f32;
+            // Raised-cosine inhalation/exhalation curve
+            let breath_env = 0.5 * (1.0 - (TAU * progress).cos());
+
+            let l = ((TAU * f_infra * t).sin() * 0.55 + (TAU * f_sub * t).sin() * 0.45)
+                * breath_env
+                * ceiling_lin
+                * (0.55 + 0.35 * load);
+            let r = ((TAU * (f_infra + 1.2) * t).sin() * 0.55
+                + (TAU * (f_sub + 1.8) * t).sin() * 0.45)
+                * breath_env
+                * ceiling_lin
+                * (0.55 + 0.35 * load);
+
+            stereo.push(apply_hard_decibel_limiter(l, ceiling_lin));
+            stereo.push(apply_hard_decibel_limiter(r, ceiling_lin));
+        }
         stereo
     }
 }
@@ -602,6 +834,60 @@ impl CpalAcousticEngine {
             base_freq_hz * self.sympathy_pitch_factor(),
             duration_sec,
             self.peak_cap_db(),
+        );
+        self.ringbuffer.push_interleaved(&pcm)
+    }
+
+    /// Synthesizes and dispatches an EVP Spirit-Box Formant Whisper (`F1/F2` vocal tract sweep + AM heterodyne).
+    pub fn dispatch_evp_whisper(&self, pan_position: f32, intensity_detent: u8) -> usize {
+        if !self.is_armed() {
+            return 0;
+        }
+        self.ensure_stream_or_failover();
+        let pcm = synthesis::synthesize_evp_formant_whisper(
+            pan_position,
+            intensity_detent,
+            self.peak_cap_db(),
+            self.sympathy_pitch_factor(),
+        );
+        self.ringbuffer.push_interleaved(&pcm)
+    }
+
+    /// Synthesizes and dispatches a spatialized Wall-Stud Double-Knock & Reed-Relay Click.
+    pub fn dispatch_wall_knock(&self, pan_position: f32, intensity_detent: u8) -> usize {
+        if !self.is_armed() {
+            return 0;
+        }
+        self.ensure_stream_or_failover();
+        let pcm = synthesis::synthesize_wall_stud_double_knock(
+            pan_position,
+            intensity_detent,
+            self.peak_cap_db(),
+            self.sympathy_pitch_factor(),
+        );
+        self.ringbuffer.push_interleaved(&pcm)
+    }
+
+    /// Synthesizes and dispatches a `20+ mG` Redline `60 Hz` Mains Hum & CRT Transformer Buzz.
+    pub fn dispatch_redline_hum(&self) -> usize {
+        if !self.is_armed() {
+            return 0;
+        }
+        self.ensure_stream_or_failover();
+        let pcm = synthesis::synthesize_redline_mains_hum(self.peak_cap_db());
+        self.ringbuffer.push_interleaved(&pcm)
+    }
+
+    /// Synthesizes and dispatches an Infrasonic "Room Breath" modulated by live CPU load (`0.0 ..= 1.0`).
+    pub fn dispatch_room_breath(&self, cpu_load_norm: f32) -> usize {
+        if !self.is_armed() {
+            return 0;
+        }
+        self.ensure_stream_or_failover();
+        let pcm = synthesis::synthesize_infrasonic_room_breath(
+            cpu_load_norm,
+            self.peak_cap_db(),
+            self.sympathy_pitch_factor(),
         );
         self.ringbuffer.push_interleaved(&pcm)
     }

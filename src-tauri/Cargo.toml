@@ -5,6 +5,7 @@ description = "Project Nocturne: Ambient Workstation Poltergeist Daemon (Model N
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+license.workspace = true
 
 [lib]
 name = "nocturne_lib"
