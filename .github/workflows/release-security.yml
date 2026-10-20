@@ -93,6 +93,21 @@ jobs:
       - name: Build Target Executable
         run: cargo build --workspace --release --target ${{ matrix.target }}
 
+      - name: Build Windows Installers (MSI & NSIS EXE)
+        if: matrix.is_windows
+        shell: pwsh
+        run: |
+          npm ci
+          npx tauri build --target ${{ matrix.target }} --bundles msi,nsis
+          Get-ChildItem -Path "target\${{ matrix.target }}\release\bundle\msi\*.msi" | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination $_.Name -Force
+            Copy-Item -Path $_.FullName -Destination "nocturne-windows-x64.msi" -Force
+          }
+          Get-ChildItem -Path "target\${{ matrix.target }}\release\bundle\nsis\*-setup.exe" | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination $_.Name -Force
+            Copy-Item -Path $_.FullName -Destination "nocturne-windows-x64-setup.exe" -Force
+          }
+
       - name: Package Deliverable (Unix)
         if: "!matrix.is_windows"
         run: |
@@ -118,6 +133,8 @@ jobs:
           path: |
             ${{ matrix.archive_name }}
             ${{ matrix.alias_name }}
+            *.msi
+            *-setup.exe
           if-no-files-found: error
 
   publish-release:
