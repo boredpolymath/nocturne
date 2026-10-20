@@ -25,6 +25,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Promotional Trailer (large binary, distributed separately)
+assets/nocturne-trailer.mp4
+
 # Development & Security Checklist Documentation (kept local / untracked)
 /docs/
 docs/*.md
