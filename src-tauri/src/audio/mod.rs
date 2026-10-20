@@ -465,11 +465,15 @@ impl CpalAcousticEngine {
             .default_output_device()
             .ok_or_else(|| "No default audio output device available".to_string())?;
 
-        let config = cpal::StreamConfig {
-            channels: CHANNELS as u16,
-            sample_rate: cpal::SampleRate(self.sample_rate_hz),
-            buffer_size: cpal::BufferSize::Default,
-        };
+        let config =
+            device
+                .default_output_config()
+                .map(|c| c.into())
+                .unwrap_or(cpal::StreamConfig {
+                    channels: CHANNELS as u16,
+                    sample_rate: cpal::SampleRate(self.sample_rate_hz),
+                    buffer_size: cpal::BufferSize::Default,
+                });
 
         let rb = Arc::clone(&self.ringbuffer);
         let healthy_cb = Arc::clone(&self.stream_healthy);
@@ -483,7 +487,7 @@ impl CpalAcousticEngine {
                     let mut had_underflow = false;
                     for sample in data.iter_mut() {
                         match rb.pop_sample() {
-                            Some(val) => *sample = val,
+                            Some(val) => *sample = (val * 16.0).clamp(-0.85, 0.85),
                             None => {
                                 *sample = 0.0;
                                 had_underflow = true;

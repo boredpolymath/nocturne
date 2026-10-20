@@ -8,30 +8,38 @@
   "use strict";
 
   // Section 4.1 Zero Network Egress & Air-Gap Enforcement:
-  // Neutralize all browser network APIs inside the Webview runtime (0 KB/s guarantee)
-  const blockNetworkEgress = () => {
+  // Neutralize external browser network APIs inside the Webview runtime (0 KB/s guarantee)
+  // while returning a rejected Promise on `fetch` so Tauri v2's internal `ipc-protocol.js`
+  // seamlessly switches from `fetch('ipc://localhost/...')` to `window.ipc.postMessage`.
+  const blockNetworkEgressSync = () => {
     throw new Error(
       "SECURITY VIOLATION: Project Nocturne operates in Zero-Egress Air-Gap mode (0 KB/s)"
     );
   };
+  const blockNetworkEgressAsync = () =>
+    Promise.reject(
+      new Error(
+        "SECURITY VIOLATION: Project Nocturne operates in Zero-Egress Air-Gap mode (0 KB/s)"
+      )
+    );
   try {
     Object.defineProperty(window, "fetch", {
-      value: blockNetworkEgress,
+      value: blockNetworkEgressAsync,
       writable: false,
       configurable: false,
     });
     Object.defineProperty(window, "XMLHttpRequest", {
-      value: blockNetworkEgress,
+      value: blockNetworkEgressSync,
       writable: false,
       configurable: false,
     });
     Object.defineProperty(window, "WebSocket", {
-      value: blockNetworkEgress,
+      value: blockNetworkEgressSync,
       writable: false,
       configurable: false,
     });
     Object.defineProperty(window, "EventSource", {
-      value: blockNetworkEgress,
+      value: blockNetworkEgressSync,
       writable: false,
       configurable: false,
     });

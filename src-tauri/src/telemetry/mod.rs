@@ -208,6 +208,7 @@ struct CadenceTrackerState {
     armed_by_typing_burst: bool,
     lull_dispatched_for_current_halt: bool,
     phantom_dispatched_for_current_halt: bool,
+    last_periodic_cycle: u32,
     last_recorded_lull_sec: f32,
 }
 
@@ -215,9 +216,10 @@ impl Default for CadenceTrackerState {
     fn default() -> Self {
         Self {
             active_streak_samples: 0,
-            armed_by_typing_burst: false,
+            armed_by_typing_burst: true,
             lull_dispatched_for_current_halt: false,
             phantom_dispatched_for_current_halt: false,
+            last_periodic_cycle: 0,
             last_recorded_lull_sec: 6.2, // Initial calibrated readout matching screenshot (`06.2s`)
         }
     }
@@ -301,6 +303,7 @@ impl TelemetryEngine {
             state.armed_by_typing_burst = false;
             state.lull_dispatched_for_current_halt = false;
             state.phantom_dispatched_for_current_halt = false;
+            state.last_periodic_cycle = 0;
             return CadenceLullEvaluation {
                 current_idle_ms: idle_ms,
                 in_active_cadence: false,
@@ -311,14 +314,15 @@ impl TelemetryEngine {
             };
         }
 
+        // Re-arm automatically when entering BoundAndListening
+        state.armed_by_typing_burst = true;
+
         if idle_ms < ACTIVE_CADENCE_THRESHOLD_MS {
             // User is actively typing / interacting
             state.active_streak_samples = state.active_streak_samples.saturating_add(1);
-            if state.active_streak_samples >= MIN_ACTIVE_BURST_SAMPLES {
-                state.armed_by_typing_burst = true;
-            }
             state.lull_dispatched_for_current_halt = false;
             state.phantom_dispatched_for_current_halt = false;
+            state.last_periodic_cycle = 0;
 
             return CadenceLullEvaluation {
                 current_idle_ms: idle_ms,
@@ -350,18 +354,22 @@ impl TelemetryEngine {
                 state.phantom_dispatched_for_current_halt = true;
             }
 
-            // Record cognitive pause duration once inside [4.0s, 15.0s]
+            // Record cognitive pause duration inside [4.0s, 15.0s], and repeat every optimal_lull cycle
             if (min_lull..=max_lull).contains(&idle_sec) {
                 state.last_recorded_lull_sec = (idle_sec * 10.0).round() / 10.0;
 
                 if idle_sec >= optimal_lull && !state.lull_dispatched_for_current_halt {
                     lull_triggered = true;
                     state.lull_dispatched_for_current_halt = true;
+                    state.last_periodic_cycle = (idle_sec / optimal_lull).floor() as u32;
                 }
             } else if idle_sec > max_lull {
-                // Pause exceeded 15.0s cognitive lull window; disarm until next typing burst
-                state.armed_by_typing_burst = false;
-                state.active_streak_samples = 0;
+                let cycle = (idle_sec / optimal_lull).floor() as u32;
+                if cycle > state.last_periodic_cycle {
+                    state.last_periodic_cycle = cycle;
+                    state.last_recorded_lull_sec = optimal_lull;
+                    lull_triggered = true;
+                }
             }
         }
 
