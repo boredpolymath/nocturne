@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Same promise as the daemon: this page talks to no one. -->
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'"
+  />
+  <title>Nocturne MK-IV — Your computer is not alone.</title>
+  <meta name="description" content="Nocturne is a local-first, zero-egress desktop daemon that waits for your typing to falter in the witching hours — then fills the silence." />
+  <meta name="theme-color" content="#050607" />
+  <meta property="og:title" content="Nocturne MK-IV — Your computer is not alone." />
+  <meta property="og:description" content="An ambient workstation poltergeist. It only wakes between 00:00 and 05:00. It only wants your silence." />
+  <meta property="og:image" content="assets/instrument.jpg" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Atmosphere layers ===== -->
+  <canvas id="grain" class="fx fx-grain" aria-hidden="true"></canvas>
+  <div class="fx fx-scanlines" aria-hidden="true"></div>
+  <div class="fx fx-vignette" aria-hidden="true"></div>
+  <div class="fx fx-darken" aria-hidden="true"></div>
+  <div id="whispers" class="fx fx-whispers" aria-hidden="true"></div>
+  <div id="phantom" class="phantom-cursor" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 2l7.5 19 2.4-7.6L20.5 11z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="exorcise-flash" class="exorcise-flash" aria-hidden="true">
+    <div class="exorcise-flash__inner">
+      <span class="mono">0x1B · 0x1B · 0x1B</span>
+      <strong>SIGNAL RESTORED</strong>
+      <span class="mono">NonHookStasis engaged · gamma LUT unperturbed · ringbuffer severed</span>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav" id="top">
+    <a class="nav__brand" href="#top" aria-label="Nocturne home">
+      <svg class="nav__sigil" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1"/>
+        <path d="M16 4 L16 28 M6 22 L26 22" stroke="currentColor" stroke-width="1"/>
+        <circle cx="16" cy="13" r="3.2" fill="currentColor"/>
+      </svg>
+      <span class="nav__name">NOCTURNE</span>
+      <span class="nav__tag">MK-IV</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#lull">The Lull</a>
+      <a href="#manifestations">Manifestations</a>
+      <a href="#spectral">Spectral</a>
+      <a href="#vigil">Vigil</a>
+      <a href="#exorcise">Exorcise</a>
+    </nav>
+    <div class="nav__status mono" aria-live="off">
+      <span class="rec-dot" aria-hidden="true"></span>
+      <span id="nav-mg">1.50</span>&nbsp;mG
+    </div>
+    <a class="btn btn--ghost nav__cta" href="#summon">Summon</a>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow mono">Paranormal Telemetry Unit <span class="sep">//</span> v1.0.4-RELEASE</p>
+        <h1 class="hero__title">
+          Your computer<br />
+          is not <span class="haunt" data-alt="a l o n e">alone</span>.
+        </h1>
+        <p class="hero__clock mono" aria-live="polite">
+          It is <span id="hero-time">--:--</span>.
+          You have been still for <span id="hero-idle" class="idle-count">0.0</span>s.
+        </p>
+        <p class="hero__lede">
+          Nocturne is a local-first desktop daemon that waits for your typing to falter
+          during the witching hours&nbsp;&mdash; then fills the silence with floorboard creaks,
+          phantom keystrokes, spirit-box whispers, and a screen that is not
+          <em>quite</em> the colour it was a moment ago.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--blood" href="#summon">Summon Nocturne</a>
+          <button class="btn btn--ghost" id="audio-toggle" type="button" aria-pressed="false">
+            <span class="audio-icon" aria-hidden="true"></span>
+            <span class="audio-label">Let it speak</span>
+          </button>
+        </div>
+        <p class="hero__fine mono">Headphones recommended. It knows left from right.</p>
+      </div>
+
+      <!-- Live instrument panel -->
+      <div class="instrument" aria-label="Live telemetry instrument">
+        <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+        <div class="instrument__head">
+          <div class="instrument__label">
+            <strong>NOCTURNE MK-IV</strong>
+            <span class="mono">FIELD TELEMETRY // MOD. 02</span>
+          </div>
+          <div class="seg mono" aria-label="EMF reading"><span id="seg-mg">01.50</span><small>mG</small></div>
+        </div>
+        <div class="kii" role="meter" aria-label="K-II EMF disturbance" aria-valuemin="0" aria-valuemax="5" aria-valuenow="1" id="kii">
+          <div class="kii__led" data-l="1"><i></i><span>1.5</span></div>
+          <div class="kii__led" data-l="2"><i></i><span>2.5</span></div>
+          <div class="kii__led" data-l="3"><i></i><span>10</span></div>
+          <div class="kii__led" data-l="4"><i></i><span>20</span></div>
+          <div class="kii__led" data-l="5"><i></i><span>SPIKE</span></div>
+        </div>
+        <div class="crt">
+          <canvas id="crt" width="640" height="300" aria-hidden="true"></canvas>
+          <div class="crt__overlay"></div>
+          <div class="crt__label mono">EVP SPECTROGRAPH · 64PT · <span id="crt-state">AMBIENT</span></div>
+        </div>
+        <div class="instrument__foot mono">
+          <span><i class="lamp lamp--green"></i>SYS RUN</span>
+          <span><i class="lamp lamp--amber" id="lamp-lull"></i>LULL</span>
+          <span><i class="lamp lamp--red" id="lamp-event"></i>EVENT</span>
+          <span class="instrument__thermo">Tctl <b id="tctl">41.2</b>°C · cold spot <b id="coldspot">−0.0</b>°C</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Caution tape ===== -->
+    <div class="tape" aria-hidden="true">
+      <div class="tape__track mono">
+        <span>⚠ Do not run while alone</span><span>00:00 – 05:00</span><span>Zero egress</span><span>Zero keylogging</span><span>ESC · ESC · ESC</span><span>It only wants your silence</span>
+        <span>⚠ Do not run while alone</span><span>00:00 – 05:00</span><span>Zero egress</span><span>Zero keylogging</span><span>ESC · ESC · ESC</span><span>It only wants your silence</span>
+      </div>
+    </div>
+
+    <!-- ===== The Lull ===== -->
+    <section class="section lull" id="lull">
+      <header class="section__head">
+        <p class="eyebrow mono">§ 01 — Cognitive lull analyzer</p>
+        <h2>It waits for you to <span class="haunt" data-alt="stop">stop</span>.</h2>
+        <p class="section__lede">
+          Nocturne never reads what you type. It only listens to the <em>gaps</em> —
+          the moments between keystrokes when your attention drifts and the room goes quiet.
+          That is when it moves.
+        </p>
+      </header>
+
+      <ol class="timeline" id="timeline">
+        <li class="timeline__step" data-t="0.0">
+          <span class="timeline__t mono">0.0s</span>
+          <div>
+            <h3>You pause.</h3>
+            <p>A thought. A sip of something cold. Your hands leave the keys.</p>
+          </div>
+        </li>
+        <li class="timeline__step" data-t="2.5">
+          <span class="timeline__t mono">2.5s</span>
+          <div>
+            <h3>A key answers.</h3>
+            <p>One soft buckling-spring click, somewhere just off to the side. You didn’t press it.</p>
+          </div>
+        </li>
+        <li class="timeline__step" data-t="4.0">
+          <span class="timeline__t mono">4.0s</span>
+          <div>
+            <h3>The room notices.</h3>
+            <p>The lull window opens. The REM-Pod array arms. The needle starts to lean.</p>
+          </div>
+        </li>
+        <li class="timeline__step" data-t="7.2">
+          <span class="timeline__t mono">7.2s</span>
+          <div>
+            <h3>Something shifts its weight behind you.</h3>
+            <p>A floorboard, binaurally placed over your left shoulder. Pitched to the heat of your CPU.</p>
+          </div>
+        </li>
+        <li class="timeline__step" data-t="15.0">
+          <span class="timeline__t mono">15.0s</span>
+          <div>
+            <h3>It has learned your rhythm.</h3>
+            <p>The screen cools by a few percent. Your cursor drifts a pixel or two, in a figure eight. You will tell yourself you imagined it.</p>
+          </div>
+        </li>
+      </ol>
+      <p class="lull__note mono">
+        This page runs the same analyzer. Stop moving for a while. <span class="dim">We’ll wait.</span>
+      </p>
+    </section>
+
+    <!-- ===== Manifestations ===== -->
+    <section class="section" id="manifestations">
+      <header class="section__head">
+        <p class="eyebrow mono">§ 02 — Procedural acoustic manifestation engine</p>
+        <h2>Six things you will hear<br />and never find.</h2>
+        <p class="section__lede">
+          Every sound is synthesized live — no samples, no recordings, nothing to grep for.
+          48&nbsp;kHz stereo, streamed straight through a lock-free ringbuffer, limited to just
+          above the noise floor of a quiet room. Loud enough to notice. Quiet enough to doubt.
+        </p>
+      </header>
+
+      <div class="specimens">
+        <article class="specimen" data-specimen="creak">
+          <header><span class="mono">SPECIMEN 01</span><span class="specimen__hz mono">stick-slip · ITD/ILD</span></header>
+          <h3>Spatial Floorboard Creak</h3>
+          <p>Multi-modal wood resonance, localized behind you with interaural delay. When your processor runs hot, the boards complain in a lower voice.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+        <article class="specimen" data-specimen="key">
+          <header><span class="mono">SPECIMEN 02</span><span class="specimen__hz mono">3.2 kHz · 420 Hz</span></header>
+          <h3>Phantom Keystroke Echo</h3>
+          <p>A single mechanical switch — the click, then the keycap bottoming out. It arrives exactly when you stop typing, as if someone finished your sentence.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+        <article class="specimen" data-specimen="whisper">
+          <header><span class="mono">SPECIMEN 03</span><span class="specimen__hz mono">F1 · F2 · F3 · 5.5 Hz</span></header>
+          <h3>Spirit-Box EVP Whisper</h3>
+          <p>Breath shaped through a three-formant vocal tract, syllabic, orbiting your head. There are no words. You will hear words anyway.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+        <article class="specimen" data-specimen="knock">
+          <header><span class="mono">SPECIMEN 04</span><span class="specimen__hz mono">145 Hz · 165 ms · 2.4 kHz</span></header>
+          <h3>Wall-Stud Double-Knock</h3>
+          <p>Two raps on structural timber, a hundred and sixty-five milliseconds apart. Then a small metallic click, like a latch deciding.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+        <article class="specimen" data-specimen="hum">
+          <header><span class="mono">SPECIMEN 05</span><span class="specimen__hz mono">55 · 110 · 165 Hz</span></header>
+          <h3>Redline Mains Hum</h3>
+          <p>A transformer ground-loop swelling out of nowhere, crackling with corona. The spectrograph tears. The meter pins red. Nothing is plugged in there.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+        <article class="specimen" data-specimen="breath">
+          <header><span class="mono">SPECIMEN 06</span><span class="specimen__hz mono">18 – 24 Hz</span></header>
+          <h3>Infrasonic Room Breath</h3>
+          <p>A standing wave below the threshold of hearing, rising and falling with your machine’s thermal load. You won’t hear this one. You’ll <em>feel</em> it — in your chest, in the back of your neck.</p>
+          <button class="play mono" type="button">▶ Play specimen</button>
+        </article>
+      </div>
+      <p class="specimens__note mono" id="audio-note">Audio is asleep. Press any specimen to wake it.</p>
+    </section>
+
+    <!-- ===== Instrument photo ===== -->
+    <section class="photo">
+      <figure class="photo__frame">
+        <img src="assets/instrument.jpg" alt="The Nocturne MK-IV rackmount instrument: a 22.40 mG readout, five K-II LEDs with a red SPIKE lamp, and a green CRT showing an EVP waveform." loading="lazy" width="1376" height="768" />
+        <figcaption class="mono">
+          <span>FIG. 1 — Unit MK-IV, recovered from a server closet, 03:12.</span>
+          <span class="dim">Reading at time of photograph: 22.40 mG. Room was empty.</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ===== Spectral ===== -->
+    <section class="section spectral" id="spectral">
+      <header class="section__head">
+        <p class="eyebrow mono">§ 03 — Full-screen spectral color-shift</p>
+        <h2>Your monitor will <span class="haunt" data-alt="lie">change</span>.<br />Slowly enough to deny.</h2>
+        <p class="section__lede">
+          Nocturne reaches past the window and into your display’s hardware gamma tables,
+          bending them along a 1,200&nbsp;ms cubic-bezier curve — never more than 8% from baseline.
+          Not enough to see happening. Just enough to feel that something has.
+        </p>
+      </header>
+
+      <div class="modes">
+        <article class="mode mode--cyan">
+          <span class="mode__n mono">MODE 0</span>
+          <h3>Ectoplasmic Cyan-Violet Phase Inversion</h3>
+          <p>The red channel is crushed. Greens and blues surge. Warm skin goes the colour of something that has been underwater for a long time.</p>
+          <code class="mono">hue-rotate(155deg) · R↓ G↑ B↑</code>
+          <button class="btn btn--ghost" type="button" data-mode="0">Let it into this page</button>
+        </article>
+        <article class="mode mode--crimson">
+          <span class="mode__n mono">MODE 1</span>
+          <h3>Crimson Nightmare Solarization</h3>
+          <p>The red channel floods. Everything else drains away. Your documents, your code, your face in the webcam preview — all of it, briefly, the colour of a darkroom.</p>
+          <code class="mono">hue-rotate(−55deg) · R↑ G↓ B↓</code>
+          <button class="btn btn--ghost" type="button" data-mode="1">Let it into this page</button>
+        </article>
+      </div>
+
+      <div class="planchette">
+        <div class="planchette__fig" aria-hidden="true">
+          <svg viewBox="0 0 200 120">
+            <path class="planchette__path" d="M100 60 C 140 10, 180 10, 180 60 S 140 110, 100 60 S 20 10, 20 60 S 60 110, 100 60" fill="none"/>
+            <circle class="planchette__dot" r="4"/>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow mono">Planchette micro-drift</p>
+          <h3>And your cursor won’t be quite where you left it.</h3>
+          <p>At the onset of a manifestation, the pointer is nudged one to three pixels along a Lissajous figure-eight. Like a hand resting lightly on top of yours.</p>
+          <p class="dim mono small">You may have noticed a second cursor on this page. That one isn’t ours.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Vigil ===== -->
+    <section class="section vigil" id="vigil">
+      <div class="vigil__dial">
+        <svg viewBox="0 0 300 300" aria-labelledby="vigil-title" role="img">
+          <title id="vigil-title">24-hour vigil chronometer</title>
+          <circle cx="150" cy="150" r="128" class="dial__ring"/>
+          <path id="vigil-arc" class="dial__arc"/>
+          <g id="dial-ticks"></g>
+          <g id="dial-labels" class="mono"></g>
+          <line id="dial-needle" x1="150" y1="150" x2="150" y2="38" class="dial__needle"/>
+          <circle cx="150" cy="150" r="5" class="dial__hub"/>
+        </svg>
+      </div>
+      <div class="vigil__copy">
+        <p class="eyebrow mono">§ 04 — Witching hour vigil chronometer</p>
+        <h2>It sleeps all day.</h2>
+        <p class="section__lede">
+          Nocturne is dormant until midnight. Between <b>00:00</b> and <b>05:00</b> — validated in
+          fifteen-minute increments, scrubbable on a 24-hour timeline — it is awake, armed, and listening
+          for the space between your keystrokes. Set a curfew if you dare stay up later.
+        </p>
+        <div class="vigil__status" id="vigil-status">
+          <span class="vigil__badge mono" id="vigil-badge">CALCULATING</span>
+          <p id="vigil-msg" class="vigil__msg">Consulting the hour…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Exorcise ===== -->
+    <section class="section exorcise" id="exorcise">
+      <header class="section__head center">
+        <p class="eyebrow mono">§ 05 — Hardware exorcise failsafe circuit</p>
+        <h2>There is always a way out.</h2>
+        <p class="section__lede">
+          Press <kbd>ESC</kbd> three times within 800 milliseconds. In under 50&nbsp;ms the audio is severed,
+          your display’s true colours are restored, every filter is torn down, and the daemon falls into a deep,
+          dreamless stasis. It also survives crashes, <code>SIGINT</code>, <code>SIGTERM</code>, and <code>SIGHUP</code>.
+          Whatever happens, your screen comes back.
+        </p>
+      </header>
+
+      <div class="esc-rig">
+        <div class="esc-slots" id="esc-slots" aria-label="Escape key ringbuffer">
+          <span class="esc-slot">ESC</span><span class="esc-slot">ESC</span><span class="esc-slot">ESC</span>
+        </div>
+        <div class="esc-meter"><i id="esc-window"></i></div>
+        <p class="mono dim small">3-slot monotonic ringbuffer · filters for 0x1B only · every other key is discarded unread</p>
+        <button class="btn btn--blood btn--big" id="exorcise-btn" type="button">Manual exorcise purge circuit</button>
+        <p class="mono small" id="exorcise-msg" aria-live="polite">&nbsp;</p>
+      </div>
+    </section>
+
+    <!-- ===== Privacy ===== -->
+    <section class="section privacy" id="privacy">
+      <header class="section__head">
+        <p class="eyebrow mono">§ 06 — Zero-egress air gap</p>
+        <h2>It hears nothing.<br />It tells no one.</h2>
+        <p class="section__lede">
+          It doesn’t want your data. It only wants your silence. Nocturne measures <em>how long</em> you’ve been idle —
+          never what you typed — and nothing it learns ever leaves the machine. The only thing it keeps is a
+          diary, locally, of the nights it visited.
+        </p>
+      </header>
+      <div class="specs">
+        <div class="spec"><b>0</b><span>bytes of keystrokes captured</span><small class="mono">OS idle-time queries only</small></div>
+        <div class="spec"><b>0</b><span>network sockets</span><small class="mono">AF_INET scrubber · Seatbelt sandbox · connect-src 'none'</small></div>
+        <div class="spec"><b>&lt;0.5%</b><span>CPU while waiting</span><small class="mono">It is very patient</small></div>
+        <div class="spec"><b>&lt;30&nbsp;MB</b><span>resident memory</span><small class="mono">Small enough to hide</small></div>
+        <div class="spec"><b>&lt;15&nbsp;ms</b><span>p99 dispatch latency</span><small class="mono">It answers quickly</small></div>
+        <div class="spec"><b>10,000</b><span>incidents remembered</span><small class="mono">Local SQLite · WAL · 0600</small></div>
+      </div>
+      <p class="mono small dim privacy__fine">This website keeps the same promise: no trackers, no fonts from elsewhere, no analytics, <code>connect-src 'none'</code>. Everything that happens here, stays here. Including what happened in the log below.</p>
+    </section>
+
+    <!-- ===== Incident log ===== -->
+    <section class="section log-section">
+      <header class="section__head">
+        <p class="eyebrow mono">§ 07 — Incident audit log</p>
+        <h2>Tonight’s visit.</h2>
+        <p class="section__lede">A live record of this session. Some of these entries are about you.</p>
+      </header>
+      <div class="terminal">
+        <div class="terminal__bar mono"><span></span><span></span><span></span><b>nocturne_telemetry.db — tail -f incidents</b></div>
+        <ol class="terminal__body mono" id="log" aria-live="polite" aria-relevant="additions"></ol>
+      </div>
+    </section>
+
+    <!-- ===== Summon / Download ===== -->
+    <section class="section summon" id="summon">
+      <header class="section__head center">
+        <p class="eyebrow mono">§ 08 — Invocation</p>
+        <h2>Invite it in.</h2>
+        <p class="section__lede">It cannot enter unless you install it. Tauri v2 and Rust. macOS, Windows, and Linux.</p>
+      </header>
+      <div class="platforms">
+        <a class="platform" href="https://github.com/boredpolymath/nocturne/releases" rel="noopener">
+          <span class="mono">macOS</span><b>Apple Silicon</b><small class="mono">aarch64-apple-darwin</small>
+        </a>
+        <a class="platform" href="https://github.com/boredpolymath/nocturne/releases" rel="noopener">
+          <span class="mono">macOS</span><b>Intel</b><small class="mono">x86_64-apple-darwin</small>
+        </a>
+        <a class="platform" href="https://github.com/boredpolymath/nocturne/releases" rel="noopener">
+          <span class="mono">Windows</span><b>x64</b><small class="mono">x86_64-pc-windows-msvc</small>
+        </a>
+        <a class="platform" href="https://github.com/boredpolymath/nocturne/releases" rel="noopener">
+          <span class="mono">Linux</span><b>x64</b><small class="mono">x86_64-unknown-linux-gnu</small>
+        </a>
+      </div>
+      <div class="source">
+        <p class="mono small dim">Or raise it from source:</p>
+<pre class="mono"><code><span class="c"># verify the bones before you bring them inside</span>
+git clone https://github.com/boredpolymath/nocturne.git && cd nocturne
+python3 scripts/generate_release_integrity.py --verify
+cargo test --workspace      <span class="c"># 54 tests. all of them pass. that’s what worries us.</span>
+npm run dev</code></pre>
+        <p class="mono small dim">Every release ships with a CycloneDX 1.5 SBOM, <code>SHA256SUMS.txt</code>, and a <code>cargo-deny</code> supply-chain policy. You should know exactly what you’re letting in.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="eyes" id="eyes" aria-hidden="true"><i></i><i></i></div>
+    <p class="footer__line">
+      You have been here for <span id="dwell" class="mono">00:00</span>.
+      <span class="dim">It has been counting too.</span>
+    </p>
+    <p class="mono small dim">
+      Nocturne MK-IV · v1.0.4-RELEASE · Local-first · Zero egress ·
+      <a href="https://github.com/boredpolymath/nocturne" rel="noopener">GitHub</a>
+    </p>
+    <p class="mono small dim">Press <kbd>ESC</kbd> <kbd>ESC</kbd> <kbd>ESC</kbd> at any time.</p>
+  </footer>
+
+  <script src="audio.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
