@@ -513,7 +513,7 @@ h3 { font-weight: 400; font-size: 1.45rem; line-height: 1.2; margin: 0 0 0.6rem;
 @keyframes logline { from { opacity: 0; transform: translateX(-4px); } }
 
 /* ---------- Summon ---------- */
-.platforms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 3rem; }
+.platforms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; }
 .platform {
   display: grid; gap: 0.3rem; padding: 1.6rem 1.4rem;
   border: 1px solid var(--line); background: var(--void-2);
