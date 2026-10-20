@@ -1,0 +1,9 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Zero-egress local IPC capability set for the Nocturne Séance Panel",
+  "windows": ["seance-panel"],
+  "permissions": [
+    "core:default"
+  ]
+}

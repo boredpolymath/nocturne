@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <!-- Top Window Titlebar -->
+  <header class="window-titlebar">
+    <div class="window-controls">
+      <span class="win-dot-box">·</span>
+      <span class="win-dot-box">·</span>
+    </div>
+    <div class="brand-badge">
+      <svg class="brand-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="2" y="5" width="12" height="9" rx="1.5" stroke="#d4943a" stroke-width="1.4" />
+        <path d="M5 5L8 2L11 5" stroke="#d4943a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="10.5" cy="9.5" r="1.5" fill="#d4943a" />
+        <line x1="4.5" y1="8" x2="7.5" y2="8" stroke="#d4943a" stroke-width="1.2" />
+        <line x1="4.5" y1="10.8" x2="7.5" y2="10.8" stroke="#d4943a" stroke-width="1.2" />
+      </svg>
+      <span class="brand-title">NOCTURNE</span>
+      <span class="brand-tag">MK-IV</span>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="viewport-shell">
+    <section class="chassis-frame">
+      <!-- 4 Corner Screws / Rivets -->
+      <span class="chassis-screw screw-tl"></span>
+      <span class="chassis-screw screw-tr"></span>
+      <span class="chassis-screw screw-bl"></span>
+      <span class="chassis-screw screw-br"></span>
+
+      <!-- Top Telemetry Banner Header -->
+      <div class="unit-header">
+        <div class="unit-header-left">
+          <div class="unit-badges-row">
+            <span class="pill-badge pill-neutral">
+              <span class="dot dot-amber"></span>
+              PARANORMAL TELEMETRY UNIT // MODEL NOCTURNE-MK IV
+            </span>
+            <span class="pill-badge pill-green">
+              <span class="dot dot-green"></span>
+              AIR-GAPPED &amp; CALIBRATED
+            </span>
+          </div>
+
+          <h1 class="unit-main-title">POLTERGEIST FIELD DETECTOR &amp; REM-POD</h1>
+
+          <div class="unit-telemetry-meta">
+            <div class="meta-row">
+              <span>DAEMON MEM: <strong class="text-white">28.4 MB RESIDENT</strong></span>
+              <span class="meta-sep">|</span>
+              <span>AUDIO CORE: <strong class="text-amber">RAW CPAL RINGBUFFER</strong></span>
+              <span class="meta-sep">|</span>
+              <span>TELEMETRY: <strong class="text-white">ZERO NET EGRESS (0 KB/s)</strong></span>
+              <span class="meta-sep">|</span>
+            </div>
+            <div class="meta-row">
+              <span>KEYLOGGING: <strong class="text-green">NONE (CADENCE LULL HOOK ONLY)</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Power / Surveillance Box -->
+        <div class="power-surveillance-box">
+          <div class="power-info">
+            <div class="power-label">MAIN POWER /</div>
+            <div class="power-label">SURVEILLANCE</div>
+            <div class="power-status">
+              <span class="dot dot-amber-glow"></span>
+              <span>BOUND &amp; LISTENING</span>
+            </div>
+            <div class="power-sublabel">RELAY 12V COIL ENGAGED</div>
+          </div>
+          <div class="rocker-switch" id="main-power-switch" role="switch" aria-checked="true" tabindex="0">
+            <span class="rocker-off">O</span>
+            <span class="rocker-on">ON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main 2-Column Instrument Grid -->
+      <div class="instrument-grid">
+        <!-- LEFT COLUMN -->
+        <div class="col-left">
+          <!-- 1. K-II EMF METER & REM-POD DISTURBANCE ARRAY -->
+          <article class="panel">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-amber" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="1.6" fill="currentColor" />
+                  <path d="M5.2 5.2a4 4 0 0 0 0 5.6M10.8 5.2a4 4 0 0 1 0 5.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                  <path d="M3 3a7 7 0 0 0 0 10M13 3a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                </svg>
+                <h2 class="panel-title">K-II EMF METER &amp; REM-POD DISTURBANCE ARRAY</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="header-meta-label">CH: 01-EMF</span>
+                <span class="badge-tag badge-amber">CAL: 50-60Hz</span>
+              </div>
+            </header>
+
+            <div class="emf-body">
+              <!-- Left Digital CRT Readout -->
+              <div class="emf-crt-box">
+                <div class="emf-crt-top">
+                  <span>MILLIGAUSS (MG)</span>
+                  <span>FIELD STRENGTH</span>
+                </div>
+                <div class="emf-crt-value" id="emf-readout">02.87</div>
+                <div class="emf-crt-bottom">
+                  <span class="text-green">REM-POD: ACTIVE</span>
+                  <span class="text-amber">DRIFT: +0.14 mG</span>
+                </div>
+              </div>
+
+              <!-- Right LED Array & Sensitivity -->
+              <div class="emf-array-col">
+                <div class="emf-scale-labels">
+                  <span>1.5MG [BASE]</span>
+                  <span>2.5MG</span>
+                  <span>10MG</span>
+                  <span>20MG</span>
+                  <span class="text-red">20+ SPIKE</span>
+                </div>
+
+                <div class="emf-led-row">
+                  <div class="led-item">
+                    <div class="led-pill led-green-active">NORM</div>
+                    <span class="led-val text-green">1.5</span>
+                  </div>
+                  <div class="led-item">
+                    <div class="led-pill led-green-active">LOW</div>
+                    <span class="led-val text-green">2.5</span>
+                  </div>
+                  <div class="led-item">
+                    <div class="led-pill led-amber-dim">MID</div>
+                    <span class="led-val text-amber">10</span>
+                  </div>
+                  <div class="led-item">
+                    <div class="led-pill led-orange-dim">HIGH</div>
+                    <span class="led-val text-muted">20</span>
+                  </div>
+                  <div class="led-item">
+                    <div class="led-pill led-red-dim">SPIKE</div>
+                    <span class="led-val text-muted">20+</span>
+                  </div>
+                </div>
+
+                <div class="rem-radius-box">
+                  <div class="rem-radius-left">
+                    <svg class="icon-xs text-amber" viewBox="0 0 16 16" fill="none">
+                      <circle cx="5" cy="11" r="2" stroke="currentColor" stroke-width="1.3" />
+                      <path d="M5 6a5 5 0 0 1 5 5M5 3a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                    </svg>
+                    <span>REM-POD RADIUS<br />SENSITIVITY:</span>
+                  </div>
+                  <div class="rem-radius-right">
+                    3.2 METERS // 4-STEP<br />CAP
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2. WITCHING HOUR VIGIL CHRONOMETER -->
+          <article class="panel">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-amber" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M8 4.5V8L10.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+                <h2 class="panel-title">WITCHING HOUR VIGIL CHRONOMETER</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="badge-tag badge-amber-pill">
+                  <span class="dot dot-amber"></span>
+                  CURFEW ENGAGED
+                </span>
+              </div>
+            </header>
+
+            <p class="panel-desc">
+              Operational vigil chronometer bracket locked strictly to nocturnal manifestation cycles [00:00 – 05:00]. Outside this window, Nocturne reverts to non-hook stasis.
+            </p>
+
+            <div class="chrono-labels-row">
+              <span class="chrono-marker">00:00 [MIDNIGHT STRIKE]</span>
+              <span class="badge-tag badge-amber-dark">VIGIL BRACKET: 00:00 - 05:00</span>
+              <div class="chrono-right-markers">
+                <span>12:00</span>
+                <span>23:59</span>
+              </div>
+            </div>
+
+            <div class="chrono-timeline-track">
+              <div class="chrono-active-window">
+                <span class="window-time">00:00</span>
+                <span class="window-divider"></span>
+                <span class="window-time">05:00</span>
+              </div>
+              <div class="chrono-ticks">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="chrono-footer">
+              <div class="station-time-wrap">
+                <svg class="icon-xs text-amber" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.3" />
+                  <path d="M8 5.5V8.5L10 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                  <path d="M3 3.5L5 2M13 3.5L11 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                </svg>
+                <span class="station-label">STATION TIME:</span>
+                <strong class="station-clock" id="station-clock">02:41:18 AM</strong>
+              </div>
+              <div class="chrono-actions">
+                <button type="button" class="btn-console">SET BRACKET</button>
+                <button type="button" class="btn-console">NTP SYNC</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- 3. PROCEDURAL INTERVENTION ENGINES -->
+          <article class="panel">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-amber" viewBox="0 0 16 16" fill="none">
+                  <line x1="2" y1="4" x2="14" y2="4" stroke="currentColor" stroke-width="1.3" />
+                  <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.3" />
+                  <line x1="2" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.3" />
+                  <circle cx="5" cy="4" r="1.7" fill="#121417" stroke="currentColor" stroke-width="1.3" />
+                  <circle cx="11" cy="8" r="1.7" fill="#121417" stroke="currentColor" stroke-width="1.3" />
+                  <circle cx="7" cy="12" r="1.7" fill="#121417" stroke="currentColor" stroke-width="1.3" />
+                </svg>
+                <h2 class="panel-title">PROCEDURAL INTERVENTION ENGINES</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="badge-tag badge-amber">3 CHANNELS READY</span>
+              </div>
+            </header>
+
+            <div class="intervention-list">
+              <!-- Engine 1 -->
+              <div class="engine-card">
+                <div class="engine-icon-box text-amber">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path d="M3 6.5H5.5L9 3.5V12.5L5.5 9.5H3V6.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+                    <path d="M11.2 5.5a3.5 3.5 0 0 1 0 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <div class="engine-content">
+                  <div class="engine-title-row">
+                    <h3 class="engine-name">SPATIAL BINAURAL ACOUSTICS</h3>
+                    <span class="mini-badge mini-amber">cpal DIRECT</span>
+                  </div>
+                  <p class="engine-desc">
+                    Bypasses OS sound stack to render low-frequency sub-floor creaks and phantom key clicks during 4–15s cognitive pauses.
+                  </p>
+                </div>
+                <button type="button" class="toggle-switch active" aria-pressed="true" data-channel="acoustics">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+
+              <!-- Engine 2 -->
+              <div class="engine-card">
+                <div class="engine-icon-box text-amber">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3" />
+                    <path d="M8 2V3.5M8 12.5V14M2 8H3.5M12.5 8H14M3.8 3.8L4.9 4.9M11.1 11.1L12.2 12.2M12.2 3.8L11.1 4.9M4.9 11.1L3.8 12.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <div class="engine-content">
+                  <div class="engine-title-row">
+                    <h3 class="engine-name">DISPLAY GAMMA PERTURBATION</h3>
+                    <span class="mini-badge mini-green">&le;8.0% CLAMP</span>
+                  </div>
+                  <p class="engine-desc">
+                    Microscopic, peripheral gamma perturbations clamped to strictly imperceptible thresholds. Interpolated smoothly across a 1,200ms cubic bezier curve.
+                  </p>
+                </div>
+                <button type="button" class="toggle-switch active" aria-pressed="true" data-channel="gamma">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+
+              <!-- Engine 3 -->
+              <div class="engine-card">
+                <div class="engine-icon-box text-muted">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path d="M6.5 3.5a1.5 1.5 0 0 1 3 0v5.2a3 3 0 1 1-3 0V3.5Z" stroke="currentColor" stroke-width="1.3" />
+                    <circle cx="8" cy="11" r="1.2" fill="currentColor" />
+                  </svg>
+                </div>
+                <div class="engine-content">
+                  <div class="engine-title-row">
+                    <h3 class="engine-name">THERMAL COUPLING &amp; COLD SPOTS</h3>
+                    <span class="mini-badge mini-neutral">CPU Tctl SENSOR</span>
+                  </div>
+                  <p class="engine-desc">
+                    Modulates acoustic pitch in sympathy with CPU junction temperatures and battery voltage dips to simulate cold-spot manifestation drain.
+                  </p>
+                </div>
+                <button type="button" class="toggle-switch" aria-pressed="false" data-channel="thermal">
+                  <span class="toggle-thumb"></span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- 4. INTENSITY DETENTS & LULL CALIBRATION -->
+          <article class="panel">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-amber" viewBox="0 0 16 16" fill="none">
+                  <circle cx="4" cy="4" r="1.2" fill="currentColor" />
+                  <circle cx="8" cy="4" r="1.2" fill="currentColor" />
+                  <circle cx="12" cy="4" r="1.2" fill="currentColor" />
+                  <circle cx="4" cy="8" r="1.2" fill="currentColor" />
+                  <circle cx="8" cy="8" r="1.2" fill="currentColor" />
+                  <circle cx="12" cy="8" r="1.2" fill="currentColor" />
+                  <circle cx="4" cy="12" r="1.2" fill="currentColor" />
+                  <circle cx="8" cy="12" r="1.2" fill="currentColor" />
+                  <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+                </svg>
+                <h2 class="panel-title">INTENSITY DETENTS &amp; LULL CALIBRATION</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="badge-tag badge-red">PEAK CAP: +12 dB</span>
+              </div>
+            </header>
+
+            <div class="calibration-grid">
+              <!-- Left Box: Manifestation Intensity Detent -->
+              <div class="calib-card">
+                <div class="calib-card-top">
+                  <span>MANIFESTATION INTENSITY DETENT</span>
+                  <span class="text-amber" id="detent-pos-label">POS 1 // SUBTLE</span>
+                </div>
+
+                <div class="detent-selector">
+                  <button type="button" class="detent-btn active" data-detent="1">
+                    <span class="detent-dot"></span>
+                    <span class="detent-label">SUBTLE</span>
+                  </button>
+                  <button type="button" class="detent-btn" data-detent="2">
+                    <span class="detent-dot"></span>
+                    <span class="detent-label">UNSETTLE</span>
+                  </button>
+                  <button type="button" class="detent-btn" data-detent="3">
+                    <span class="detent-dot"></span>
+                    <span class="detent-label">ACUTE</span>
+                  </button>
+                </div>
+
+                <p class="calib-footnote">
+                  Detent 1: Restrained psychoacoustic floor; blends into ambient room acoustics.
+                </p>
+              </div>
+
+              <!-- Right Box: Cognitive Lull Trigger Window -->
+              <div class="calib-card">
+                <div class="calib-card-top">
+                  <span>COGNITIVE LULL TRIGGER WINDOW</span>
+                  <span class="lull-readout" id="lull-readout">07.5s</span>
+                </div>
+
+                <div class="lull-slider-wrap">
+                  <input
+                    type="range"
+                    id="lull-slider"
+                    class="lull-slider"
+                    min="4.0"
+                    max="15.0"
+                    step="0.1"
+                    value="7.5"
+                    aria-label="Cognitive Lull Trigger Window"
+                  />
+                </div>
+
+                <div class="lull-scale-row">
+                  <span>4.0s [RAPID CADENCE]</span>
+                  <span class="text-amber">OPTIMAL: 7.5s</span>
+                  <span>15.0s [LONG PAUSE]</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-right">
+          <!-- 1. CRT EVP SPECTROGRAPH // CPAL STREAM -->
+          <article class="panel panel-spectrograph">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-green" viewBox="0 0 16 16" fill="none">
+                  <path d="M1.5 8H4L5.8 3.5L8 12.5L10.2 5.5L11.8 8H14.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <h2 class="panel-title panel-title-green">CRT EVP SPECTROGRAPH // CPAL STREAM</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="sweep-indicator">
+                  <span class="dot dot-green"></span>
+                  150ms SWEEP
+                </span>
+              </div>
+            </header>
+
+            <!-- Oscilloscope Canvas Box -->
+            <div class="crt-scope-container">
+              <canvas id="evp-spectrograph-canvas" width="520" height="220"></canvas>
+              <div class="crt-hud-top-right">&Delta; 0.041 mV / -44.2 dBFS</div>
+              <div class="crt-hud-bottom-left">SWEEP: 48.0 kHz &middot; BINAURAL &middot; RAW PCM</div>
+            </div>
+
+            <!-- 3 Telemetry Readout Cards -->
+            <div class="spectro-metrics-row">
+              <div class="spectro-metric-box">
+                <span class="spectro-metric-label">LAST LULL EVENT</span>
+                <strong class="spectro-metric-val text-green">06.2s</strong>
+              </div>
+              <div class="spectro-metric-box">
+                <span class="spectro-metric-label">GAMMA DRIFT</span>
+                <strong class="spectro-metric-val text-green">00.0%</strong>
+              </div>
+              <div class="spectro-metric-box">
+                <span class="spectro-metric-label">NEXT PROBABILITY</span>
+                <strong class="spectro-metric-val text-amber">14m 20s</strong>
+              </div>
+            </div>
+
+            <!-- 3 Event Log Lines -->
+            <div class="spectro-log-list">
+              <div class="spectro-log-item">
+                <span class="log-left"><span class="log-ts">[02:39:12]</span> <span class="text-cyan-green">REM_POD_CARRIER_SYNC</span></span>
+                <span class="log-right text-green">LOCKED [0x48A]</span>
+              </div>
+              <div class="spectro-log-item">
+                <span class="log-left"><span class="log-ts">[02:40:04]</span> <span class="text-amber">EVP CADENCE DETECTED: 7.2s LULL</span></span>
+                <span class="log-right text-amber">BURST SUPPRESSED</span>
+              </div>
+              <div class="spectro-log-item">
+                <span class="log-left"><span class="log-ts">[02:41:02]</span> <span class="text-cyan-green">AMBIENT_ACOUSTIC_FLOOR</span></span>
+                <span class="log-right text-green">-44.2 dBFS (BALANCED)</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2. THERMOCOUPLE & OPTICAL GAUGES -->
+          <article class="panel">
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-amber" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 3.5a1.5 1.5 0 0 1 3 0v5.2a3 3 0 1 1-3 0V3.5Z" stroke="currentColor" stroke-width="1.3" />
+                  <path d="M11 4.5H13M11 7H12.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                </svg>
+                <h2 class="panel-title">THERMOCOUPLE &amp; OPTICAL GAUGES</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="header-meta-label">ENV SENSORS</span>
+              </div>
+            </header>
+
+            <div class="gauges-grid">
+              <!-- Cold Spot Sensor -->
+              <div class="gauge-card">
+                <div class="gauge-card-top">
+                  <span>COLD SPOT SENSOR</span>
+                  <span class="dot dot-cyan"></span>
+                </div>
+                <div class="gauge-value text-cyan">18.2&deg;C</div>
+                <div class="gauge-sub text-cyan">&lowast; &Delta; -4.1&deg;C DIP DETECTED</div>
+              </div>
+
+              <!-- Gamma Modulation -->
+              <div class="gauge-card">
+                <div class="gauge-card-top">
+                  <span>GAMMA MODULATION</span>
+                  <span class="text-amber">CUBIC-BEZIER</span>
+                </div>
+                <div class="gauge-value text-amber">07.8%</div>
+                <div class="gauge-sub text-muted">CLAMP: MAX &le; 8.0% LUMINANCE</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 3. EMERGENCY EXORCISE CIRCUIT -->
+          <article class="panel panel-exorcise">
+            <div class="exorcise-hazard-bar"></div>
+
+            <header class="panel-header">
+              <div class="panel-title-group">
+                <svg class="panel-icon text-red" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M8 5V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <circle cx="8" cy="11" r="0.9" fill="currentColor" />
+                </svg>
+                <h2 class="panel-title text-red">EMERGENCY EXORCISE CIRCUIT</h2>
+              </div>
+              <div class="panel-header-right">
+                <span class="badge-tag badge-red-solid">FAILSAFE 800ms</span>
+              </div>
+            </header>
+
+            <div class="failsafe-box">
+              <div class="failsafe-title">
+                <svg class="icon-xs text-red" viewBox="0 0 16 16" fill="none">
+                  <rect x="3.5" y="7" width="9" height="6.5" rx="1" stroke="currentColor" stroke-width="1.3" />
+                  <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" />
+                </svg>
+                <span>HARDWARE EXORCISE FAILSAFE INTERRUPT</span>
+              </div>
+              <p class="failsafe-desc">
+                Depress <kbd class="keycap">[ESC]</kbd> 3 times consecutively under <strong class="text-red">800ms</strong> to sever the cpal direct ringbuffer, restore default monitor color gamma, and revert daemon to deep sleep.
+              </p>
+            </div>
+
+            <button type="button" class="btn-exorcise-purge" id="manual-exorcise-btn">
+              <svg class="purge-icon" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2C4.9 2 2.5 4.3 2.5 7.2c0 1.8.9 3.4 2.2 4.3V13.5h6.6v-2c1.3-.9 2.2-2.5 2.2-4.3C13.5 4.3 11.1 2 8 2Z" stroke="currentColor" stroke-width="1.4" />
+                <circle cx="6.2" cy="7.5" r="1" fill="currentColor" />
+                <circle cx="9.8" cy="7.5" r="1" fill="currentColor" />
+              </svg>
+              <span>MANUAL EXORCISE PURGE CIRCUIT</span>
+            </button>
+
+            <div class="exorcise-footer">
+              <span class="relay-ready">
+                <span class="dot dot-green"></span>
+                RELAY CONTACT: SEVER READY
+              </span>
+              <span class="ground-leak">GROUND LEAK: 0.04%</span>
+            </div>
+          </article>
+
+          <!-- 4. RUST CRATE MEMORY BAR -->
+          <div class="rust-status-bar">
+            <div class="rust-status-left">
+              <svg class="icon-xs text-green" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2L3 4.2V7.8C3 11.1 5.1 13.9 8 14.8C10.9 13.9 13 11.1 13 7.8V4.2L8 2Z" stroke="currentColor" stroke-width="1.3" />
+                <path d="M6 8.2L7.4 9.6L10.2 6.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>RUST CRATE MEMORY: <strong class="text-white">0 PANICS</strong></span>
+            </div>
+            <div class="rust-status-mid">PID: 8192 [DAEMON]</div>
+            <div class="rust-status-right">RING: <span class="text-amber">0xDEADBEEF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Full-Width Caution Hazard Stripe -->
+      <div class="chassis-caution-stripe"></div>
+    </section>
+  </main>
+
+  <!-- Bottom Window Footer Bar -->
+  <footer class="window-footer">
+    <div class="footer-left">
+      <span class="dot dot-amber"></span>
+      <strong class="text-white">PROJECT NOCTURNE // PARANORMAL TELEMETRY UNIT</strong>
+      <span class="footer-sep">&middot;</span>
+      <span>DAEMON BUILD: v1.0.4-RELEASE</span>
+    </div>
+    <div class="footer-right">
+      <span>SIGNAL BUFFER: <strong class="text-green">ARMED</strong></span>
+      <span class="footer-sep">|</span>
+      <span>GROUND: <strong class="text-white">0.04% LEAK</strong></span>
+      <span class="footer-sep">|</span>
+      <span>SECURITY: <strong class="text-amber">ZERO-EGRESS AIR-GAP</strong></span>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

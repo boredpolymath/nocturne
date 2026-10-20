@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Zero-egress local IPC capability set for the Nocturne Séance Panel","local":true,"windows":["seance-panel"],"permissions":["core:default"]}}

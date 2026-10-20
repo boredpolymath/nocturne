@@ -1,0 +1,1294 @@
+/* ==========================================================================
+   PROJECT NOCTURNE (MK-IV) — SÉANCE PANEL STYLESHEET
+   Monochromatic Occult Telemetry Console Aesthetic
+   ========================================================================== */
+
+:root {
+  --bg-void: #07080a;
+  --bg-chassis: #0c0e12;
+  --bg-panel: #101217;
+  --bg-panel-inset: #0a0c0f;
+  --bg-card: #13161c;
+
+  --border-subtle: #1d212a;
+  --border-panel: #232832;
+  --border-highlight: #2e3440;
+
+  --text-primary: #eceff4;
+  --text-secondary: #8b93a4;
+  --text-muted: #5d6472;
+
+  --amber: #d89638;
+  --amber-bright: #f2ae49;
+  --amber-dim: #3d2c14;
+  --amber-border: #61441c;
+
+  --green: #2ce091;
+  --green-phosphor: #23e88a;
+  --green-dim: #0d3524;
+  --green-border: #195e40;
+
+  --cyan: #33d2f7;
+  --cyan-dim: #10323d;
+
+  --red: #e5534b;
+  --red-bright: #ff6459;
+  --red-dim: #3a1616;
+  --red-border: #6e2424;
+
+  --font-serif: "Georgia", "Times New Roman", "Palatino Linotype", serif;
+  --font-mono: "SFMono-Regular", "JetBrains Mono", "Menlo", "Monaco", "Consolas", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+/* Subtle CRT scanline shader overlay across viewport */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0) 2px,
+    rgba(0, 0, 0, 0.16) 3px
+  );
+  z-index: 9999;
+}
+
+/* Utility Colors */
+.text-white { color: var(--text-primary); }
+.text-amber { color: var(--amber); }
+.text-green { color: var(--green); }
+.text-cyan { color: var(--cyan); }
+.text-cyan-green { color: #2bd9a8; }
+.text-red { color: var(--red); }
+.text-muted { color: var(--text-muted); }
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-amber { background-color: var(--amber); }
+.dot-amber-glow {
+  background-color: var(--amber-bright);
+  box-shadow: 0 0 8px var(--amber-bright);
+}
+.dot-green {
+  background-color: var(--green);
+  box-shadow: 0 0 6px rgba(44, 224, 145, 0.7);
+}
+.dot-cyan {
+  background-color: var(--cyan);
+  box-shadow: 0 0 6px rgba(51, 210, 247, 0.8);
+}
+
+.icon-xs {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   TOP WINDOW TITLEBAR
+   ========================================================================== */
+.window-titlebar {
+  height: 36px;
+  background-color: #090a0d;
+  border-bottom: 1px solid #181b22;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 14px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.win-dot-box {
+  width: 11px;
+  height: 11px;
+  border: 1px solid #2a2f3a;
+  background: #111419;
+  color: #6b7280;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #101217;
+  border: 1px solid #262932;
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+.brand-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #f3f4f6;
+}
+
+.brand-tag {
+  font-size: 9px;
+  color: var(--amber);
+  background: rgba(216, 150, 56, 0.12);
+  border: 1px solid var(--amber-border);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   MAIN CHASSIS SHELL
+   ========================================================================== */
+.viewport-shell {
+  flex: 1;
+  padding: 18px 20px 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.chassis-frame {
+  position: relative;
+  width: 100%;
+  max-width: 1240px;
+  background: var(--bg-chassis);
+  border: 1px solid #222630;
+  border-radius: 6px;
+  padding: 18px 20px 14px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75);
+}
+
+/* Corner Rivets / Screws */
+.chassis-screw {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #353b49;
+  background: #151820;
+  border-radius: 1px;
+}
+.chassis-screw::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: #2b303c;
+}
+.screw-tl { top: 6px; left: 6px; }
+.screw-tr { top: 6px; right: 6px; }
+.screw-bl { bottom: 6px; left: 6px; }
+.screw-br { bottom: 6px; right: 6px; }
+
+/* ==========================================================================
+   UNIT BANNER HEADER
+   ========================================================================== */
+.unit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 20px;
+}
+
+.unit-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  padding: 3px 9px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.pill-neutral {
+  background: #14171e;
+  border: 1px solid #292f3d;
+  color: #b8c0d0;
+}
+
+.pill-green {
+  background: rgba(16, 62, 42, 0.45);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+}
+
+.unit-main-title {
+  font-family: var(--font-serif);
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #f5f7fa;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.unit-telemetry-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-sep {
+  color: #363c4a;
+}
+
+/* Main Power / Surveillance Box */
+.power-surveillance-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #11141a;
+  border: 1px solid #262b36;
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-top: 12px;
+}
+
+.power-info {
+  text-align: right;
+}
+
+.power-label {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  line-height: 1.25;
+}
+
+.power-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+
+.power-sublabel {
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.07em;
+  margin-top: 2px;
+}
+
+.rocker-switch {
+  display: flex;
+  align-items: center;
+  width: 68px;
+  height: 36px;
+  background: #0a0c10;
+  border: 1px solid #2d3340;
+  border-radius: 4px;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.rocker-off {
+  flex: 1;
+  text-align: center;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.rocker-on {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(180deg, #e5a23e 0%, #b87922 100%);
+  color: #101216;
+  font-weight: 800;
+  font-size: 9.5px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(216, 150, 56, 0.45);
+}
+
+/* ==========================================================================
+   TWO-COLUMN INSTRUMENT GRID & COMMON PANELS
+   ========================================================================== */
+.instrument-grid {
+  display: grid;
+  grid-template-columns: 1.38fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.col-left,
+.col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 6px;
+  padding: 14px 16px;
+  position: relative;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 8px;
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #f0f3f8;
+  text-transform: uppercase;
+}
+
+.panel-title-green {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--green);
+}
+
+.panel-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-meta-label {
+  font-size: 9.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+
+.badge-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-amber {
+  background: rgba(216, 150, 56, 0.12);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+}
+
+.badge-amber-pill {
+  background: rgba(216, 150, 56, 0.1);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+  padding: 3px 9px;
+}
+
+.badge-amber-dark {
+  background: rgba(216, 150, 56, 0.14);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+}
+
+.badge-red {
+  background: rgba(229, 83, 75, 0.12);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+
+.badge-red-solid {
+  background: rgba(229, 83, 75, 0.18);
+  border: 1px solid var(--red-border);
+  color: #ff7b72;
+}
+
+/* ==========================================================================
+   LEFT PANEL 1: K-II EMF METER & REM-POD DISTURBANCE ARRAY
+   ========================================================================== */
+.emf-body {
+  display: grid;
+  grid-template-columns: 205px 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.emf-crt-box {
+  background: radial-gradient(circle at center, #081e15 0%, #05100c 100%);
+  border: 1px solid #16402c;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.emf-crt-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: #219663;
+}
+
+.emf-crt-value {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--green-phosphor);
+  text-shadow: 0 0 14px rgba(35, 232, 138, 0.55);
+  margin: 8px 0;
+}
+
+.emf-crt-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8.5px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.emf-array-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.emf-scale-labels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+  font-size: 8.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.emf-led-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  background: #0b0d11;
+  border: 1px solid #1d212a;
+  border-radius: 5px;
+  padding: 8px 8px 6px;
+}
+
+.led-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.led-pill {
+  width: 100%;
+  height: 26px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.led-green-active {
+  background: linear-gradient(180deg, #32eb9b 0%, #1dc47b 100%);
+  color: #051a10;
+  box-shadow: 0 0 12px rgba(44, 224, 145, 0.55);
+}
+
+.led-amber-dim {
+  background: #2b2113;
+  border: 1px solid #48361d;
+  color: #7d6034;
+}
+
+.led-orange-dim {
+  background: #271b14;
+  border: 1px solid #3f2a1d;
+  color: #6e4a35;
+}
+
+.led-red-dim {
+  background: #271416;
+  border: 1px solid #421f22;
+  color: #7c3b3f;
+}
+
+.led-val {
+  font-size: 8.5px;
+  font-weight: 600;
+}
+
+.rem-radius-box {
+  background: #13161d;
+  border: 1px solid #222733;
+  border-radius: 4px;
+  padding: 7px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rem-radius-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+
+.rem-radius-right {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+
+/* ==========================================================================
+   LEFT PANEL 2: WITCHING HOUR VIGIL CHRONOMETER
+   ========================================================================== */
+.panel-desc {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.chrono-labels-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+  font-size: 9.5px;
+  color: var(--text-secondary);
+}
+
+.chrono-right-markers {
+  display: flex;
+  gap: 48px;
+}
+
+.chrono-timeline-track {
+  height: 32px;
+  background: #0b0d11;
+  border: 1px solid #222731;
+  border-radius: 4px;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.chrono-active-window {
+  width: 23%;
+  background: linear-gradient(90deg, rgba(216, 150, 56, 0.24) 0%, rgba(229, 83, 75, 0.24) 100%);
+  border-left: 3px solid var(--amber);
+  border-right: 3px solid var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--amber-bright);
+  position: relative;
+}
+
+.window-divider {
+  width: 3px;
+  height: 100%;
+  background: var(--red);
+  opacity: 0.85;
+}
+
+.chrono-ticks {
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.chrono-ticks span {
+  width: 1px;
+  height: 12px;
+  background: #2b313e;
+}
+
+.chrono-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.station-time-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.station-clock {
+  font-size: 11.5px;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+}
+
+.chrono-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-console {
+  background: #171b22;
+  border: 1px solid #2c323f;
+  color: #c5ccd9;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.btn-console:hover {
+  border-color: var(--amber);
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   LEFT PANEL 3: PROCEDURAL INTERVENTION ENGINES
+   ========================================================================== */
+.intervention-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.engine-card {
+  background: var(--bg-card);
+  border: 1px solid #1f242e;
+  border-radius: 5px;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.engine-icon-box {
+  width: 28px;
+  height: 28px;
+  background: #0d0f14;
+  border: 1px solid #252a35;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.engine-icon-box svg {
+  width: 15px;
+  height: 15px;
+}
+
+.engine-content {
+  flex: 1;
+}
+
+.engine-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.engine-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.mini-badge {
+  font-size: 8px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+
+.mini-amber {
+  background: rgba(216, 150, 56, 0.14);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+}
+
+.mini-green {
+  background: rgba(44, 224, 145, 0.12);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+}
+
+.mini-neutral {
+  background: #1a1e26;
+  border: 1px solid #2e3442;
+  color: var(--text-secondary);
+}
+
+.engine-desc {
+  font-size: 9.8px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  width: 38px;
+  height: 20px;
+  background: #1a1e26;
+  border: 1px solid #2e3442;
+  border-radius: 3px;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+}
+
+.toggle-switch.active {
+  background: #272118;
+  border-color: var(--amber-border);
+  justify-content: flex-end;
+}
+
+.toggle-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: #636b78;
+}
+
+.toggle-switch.active .toggle-thumb {
+  background: var(--amber-bright);
+  box-shadow: 0 0 6px rgba(242, 174, 73, 0.5);
+}
+
+/* ==========================================================================
+   LEFT PANEL 4: INTENSITY DETENTS & LULL CALIBRATION
+   ========================================================================== */
+.calibration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.calib-card {
+  background: var(--bg-card);
+  border: 1px solid #1f242e;
+  border-radius: 5px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.calib-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.detent-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: #0b0d11;
+  border: 1px solid #1f242d;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.detent-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 7px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.detent-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #39404f;
+}
+
+.detent-btn.active {
+  background: rgba(216, 150, 56, 0.12);
+  border-color: var(--amber);
+  color: var(--amber-bright);
+}
+
+.detent-btn.active .detent-dot {
+  background: var(--amber-bright);
+  box-shadow: 0 0 6px var(--amber-bright);
+}
+
+.calib-footnote {
+  font-size: 8.5px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.lull-readout {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+}
+
+.lull-slider-wrap {
+  padding: 6px 0;
+}
+
+.lull-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  background: #1e232d;
+  border-radius: 3px;
+  outline: none;
+}
+
+.lull-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 8px rgba(242, 174, 73, 0.75);
+  cursor: pointer;
+}
+
+.lull-scale-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+}
+
+/* ==========================================================================
+   RIGHT PANEL 1: CRT EVP SPECTROGRAPH // CPAL STREAM
+   ========================================================================== */
+.sweep-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  color: var(--green);
+  letter-spacing: 0.06em;
+}
+
+.crt-scope-container {
+  position: relative;
+  background: #04120c;
+  border: 1px solid #16442e;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 215px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.85);
+}
+
+#evp-spectrograph-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.crt-hud-top-right {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #36f1cd;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(54, 241, 205, 0.5);
+}
+
+.crt-hud-bottom-left {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  font-size: 8.5px;
+  color: #26a66c;
+  letter-spacing: 0.08em;
+}
+
+.spectro-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.spectro-metric-box {
+  background: #0c0f14;
+  border: 1px solid #1c212b;
+  border-radius: 4px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.spectro-metric-label {
+  font-size: 8px;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+}
+
+.spectro-metric-val {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.spectro-log-list {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
+.spectro-log-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-ts {
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+/* ==========================================================================
+   RIGHT PANEL 2: THERMOCOUPLE & OPTICAL GAUGES
+   ========================================================================== */
+.gauges-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.gauge-card {
+  background: #0c0e13;
+  border: 1px solid #1d222c;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gauge-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.gauge-value {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.gauge-sub {
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   RIGHT PANEL 3: EMERGENCY EXORCISE CIRCUIT
+   ========================================================================== */
+.panel-exorcise {
+  background: #120c0e;
+  border: 1px solid #4a1c20;
+  padding-top: 20px;
+  overflow: hidden;
+}
+
+.exorcise-hazard-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #882327,
+    #882327 8px,
+    #160b0c 8px,
+    #160b0c 16px
+  );
+}
+
+.failsafe-box {
+  background: #170e10;
+  border: 1px solid #421b1e;
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.failsafe-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #f0b8b5;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.failsafe-desc {
+  font-size: 9.8px;
+  color: #9ca3af;
+  line-height: 1.48;
+}
+
+.keycap {
+  display: inline-block;
+  background: #23181a;
+  border: 1px solid #592a2e;
+  color: #f3f4f6;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 0 5px;
+  border-radius: 2px;
+}
+
+.btn-exorcise-purge {
+  width: 100%;
+  background: linear-gradient(180deg, #5e191c 0%, #3d1013 100%);
+  border: 1px solid #962d32;
+  border-radius: 4px;
+  padding: 11px 14px;
+  color: #ffeceb;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(229, 83, 75, 0.2);
+  margin-bottom: 10px;
+}
+
+.btn-exorcise-purge:hover {
+  background: linear-gradient(180deg, #742024 0%, #4d1418 100%);
+  border-color: var(--red-bright);
+}
+
+.purge-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--red-bright);
+}
+
+.exorcise-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+}
+
+.relay-ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+}
+
+.ground-leak {
+  color: var(--red);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   RIGHT PANEL 4: RUST CRATE MEMORY STATUS BAR
+   ========================================================================== */
+.rust-status-bar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 5px;
+  padding: 9px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.rust-status-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   BOTTOM CHASSIS CAUTION STRIPE & WINDOW FOOTER
+   ========================================================================== */
+.chassis-caution-stripe {
+  margin-top: 16px;
+  height: 7px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #70511e,
+    #70511e 8px,
+    #0e1014 8px,
+    #0e1014 16px
+  );
+}
+
+.window-footer {
+  height: 30px;
+  background: #08090c;
+  border-top: 1px solid #181c24;
+  padding: 0 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.footer-left,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-sep {
+  color: #323846;
+}

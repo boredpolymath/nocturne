@@ -1,0 +1,35 @@
+[package]
+name = "nocturne-daemon"
+version.workspace = true
+description = "Project Nocturne: Ambient Workstation Poltergeist Daemon (Model Nocturne-MK IV)"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "nocturne_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[lints]
+workspace = true
+
+[build-dependencies]
+tauri-build = { version = "2.0.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0", features = ["tray-icon"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+cpal = "0.15"
+rusqlite = { version = "0.31", features = ["bundled"] }
+sysinfo = "0.30"
+
+[profile.dev]
+panic = "unwind"
+
+[profile.release]
+panic = "unwind"
+lto = true
+strip = "symbols"
+codegen-units = 1
+opt-level = "s"

@@ -1,0 +1,29 @@
+# Dependencies & Build Artifacts
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/WixTools/
+
+# Local SQLite Persistence & WAL files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Environment & Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Development & Security Checklist Documentation (kept local / untracked)
+/docs/
+docs/*.md

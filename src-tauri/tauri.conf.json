@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Nocturne",
+  "version": "1.0.4",
+  "identifier": "local.nocturne.mk4.daemon",
+  "build": {
+    "frontendDist": "../src"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "seance-panel",
+        "title": "NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT",
+        "width": 1280,
+        "height": 1580,
+        "resizable": true,
+        "decorations": false,
+        "transparent": false,
+        "visible": true
+      }
+    ],
+    "trayIcon": {
+      "id": "nocturne-tray",
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true,
+      "tooltip": "NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT"
+    },
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg", "msi", "nsis", "deb", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "hardenedRuntime": true
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "offlineInstaller"
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libasound2"]
+      }
+    }
+  }
+}
