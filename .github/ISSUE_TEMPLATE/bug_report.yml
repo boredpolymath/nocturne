@@ -1,0 +1,62 @@
+name: "Bug Report / Telemetry Anomaly"
+description: "Report a bug in the Nocturne daemon, audio engine, display gamma LUT controller, or Séance Panel UI."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill out the details below so we can reproduce the issue.
+  - type: textarea
+    id: description
+    attributes:
+      label: "What happened?"
+      description: "A clear and concise description of the bug."
+      placeholder: "Describe what went wrong..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Steps to Reproduce"
+      description: "How can we reproduce this behavior?"
+      placeholder: |
+        1. Launch `nocturne-daemon`
+        2. Toggle Curfew Override or click `CAL: 50-60Hz`
+        3. Observe...
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: "Operating System & Architecture"
+      options:
+        - "macOS (Apple Silicon - aarch64)"
+        - "macOS (Intel - x86_64)"
+        - "Windows 10/11 (x64)"
+        - "Linux (X11 - x86_64)"
+        - "Linux (Wayland / XWayland - x86_64)"
+        - "Other (specify in logs/notes)"
+    validations:
+      required: true
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: "Affected Subsystem"
+      options:
+        - "Acoustic DSP Engine (cpal / synthesis)"
+        - "Display Gamma LUT / Spectral Color-Shift"
+        - "Planchette Cursor Drift"
+        - "Triple-ESC Exorcise Failsafe"
+        - "Séance Panel UI / CRT Spectrograph"
+        - "System Tray / Window Management"
+        - "SQLite Persistence / Incident Log"
+        - "Build / Packaging"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant Logs or Console Output"
+      description: "Paste any terminal output, crash backtraces, or incident log entries."
+      render: shell

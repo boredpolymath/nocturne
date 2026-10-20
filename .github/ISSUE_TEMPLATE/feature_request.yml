@@ -1,0 +1,45 @@
+name: "Feature / New Manifestation Proposal"
+description: "Propose a new procedural acoustic synthesis recipe, CRT telemetry gauge, or console feature."
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for a new procedural sound synthesis archetype, display anomaly, or CRT console feature? Describe it below!
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Proposal Category"
+      options:
+        - "New Procedural Acoustic Manifestation (DSP Synth)"
+        - "Display / Spectral / Cursor Effect"
+        - "Séance Panel UI / CRT Visualizer"
+        - "Telemetry / Hardware Sensor Integration"
+        - "Platform / OS Support"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Feature Description"
+      description: "What should happen, and how should it feel or sound?"
+      placeholder: "e.g., Synthesize a subtle Geiger counter radiation click train scaled to CPU core load..."
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: "Technical / DSP Notes (Optional)"
+      description: "Any thoughts on frequency ranges, synthesis algorithm, or OS APIs?"
+  - type: checkboxes
+    id: invariants
+    attributes:
+      label: "Design Invariant Alignment"
+      description: "Confirm that this proposal aligns with Nocturne's safety and privacy principles:"
+      options:
+        - label: "Requires zero network egress (100% offline/local)"
+          required: true
+        - label: "Respects input privacy (no keylogging) and is immediately reversible via the Triple-ESC Exorcise failsafe"
+          required: true

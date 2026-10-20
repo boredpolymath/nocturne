@@ -1,92 +1,187 @@
-# Project Nocturne (`MODEL NOCTURNE-MK IV`)
+<div align="center">
+
+# Project Nocturne (`MK-IV`)
+
+**An ambient workstation poltergeist & retro-industrial paranormal telemetry console.**
+
+[![Release](https://img.shields.io/github/v/release/boredpolymath/nocturne?style=flat-square&label=release&color=b91c1c)](https://github.com/boredpolymath/nocturne/releases/latest)
+[![Build & Security Audit](https://img.shields.io/github/actions/workflow/status/boredpolymath/nocturne/release-security.yml?branch=main&style=flat-square&label=build%20%26%20air-gap%20audit)](https://github.com/boredpolymath/nocturne/actions/workflows/release-security.yml)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-22c55e?style=flat-square)](LICENSE)
+[![Rust 1.77.2+](https://img.shields.io/badge/rust-1.77.2%2B-orange?style=flat-square&logo=rust)](Cargo.toml)
+[![Network Egress: 0 Bytes](https://img.shields.io/badge/network%20egress-0%20bytes%20(air--gapped)-0ea5e9?style=flat-square)](SECURITY.md)
 
 ![Project Nocturne MK-IV — Paranormal Telemetry Unit](assets/readme-thumbnail-1.png)
 
-**Ambient Workstation Poltergeist Daemon & Paranormal Telemetry Unit (`v1.0.4-RELEASE`)**
+[**Interactive Web Demo**](https://boredpolymath.github.io/nocturne/) · [**Download Binaries**](#-install--summon) · [**How It Works**](#-what-happens-in-the-silence) · [**Privacy & Safety**](#-privacy--safety-guarantees) · [**Build & Contribute**](#-contributing--hacking-on-nocturne)
 
-Nocturne is a local-first, zero-egress desktop daemon and paranormal telemetry instrument built on **Tauri v2** and **Rust** (`rust-version = "1.77.2"`). Designed as an industrial rackmount **Poltergeist Field Detector & REM-Pod**, it monitors workstation inactivity, typing cadence lulls (`4.0s–15.0s`), and live hardware sensors during nocturnal vigil brackets (`00:00–05:00`) to orchestrate spatial binaural acoustics (`cpal` direct ringbuffer), full-screen spectral color-shifts & hardware gamma LUT perturbations (`<= 8.0%` cubic-bezier ramp), and subtle Lissajous planchette cursor drift.
-
----
-
-## Key Capabilities & Tonight's Changelog (`v1.0.4-RELEASE`)
-
-### 1. Procedural Acoustic Manifestation Engine (`src-tauri/src/audio/mod.rs`)
-- **Lock-Free Stereo PCM Ringbuffer (`0xDEADBEEF`)**: Streams 48.0 kHz stereo float32 audio directly through `cpal` with a 64-point real-time oscilloscope tap and a hard psychoacoustic decibel limiter (`+6 dB` to `+18 dB` over a `-44.2 dBFS` ambient floor).
-- **6 Procedural Synthesis Interventions**:
-  1. **Spatial Floorboard Creaks** (`synthesize_spatial_creak` / `dispatch_spatial_creak`): Multi-modal stick-slip wood resonance with binaural ITD/ILD localization and CPU thermal sympathy pitch scaling.
-  2. **Phantom Keystroke Echoes** (`synthesize_phantom_keystroke` / `dispatch_phantom_keystroke_echo`): Buckling-spring switch transient (`3.2 kHz` click + `420 Hz` keycap bottom-out) triggered on `2.5s` cadence halts.
-  3. **3-Formant Spirit-Box EVP Whispers** (`synthesize_evp_formant_whisper` / `dispatch_evp_whisper`): Band-limited aspiration noise sculpted through a 3-formant vocal tract (`F1`, `F2`, `F3`) with `5.5 Hz` syllabic modulation and binaural orbital panning.
-  4. **Wall-Stud Double-Knocks & Reed-Relay Clicks** (`synthesize_wall_stud_double_knock` / `dispatch_wall_knock`): `145 Hz` structural timber double-raps (`165ms` interval) followed by a `2,400 Hz` metallic reed-relay click.
-  5. **Redline 50/60 Hz Mains Hum** (`synthesize_redline_mains_hum` / `dispatch_redline_hum`): Transformer ground-loop hum (`55 Hz` / `110 Hz` / `165 Hz` harmonics + `1,800 Hz` corona crackle) paired with `20+ mG` CRT scanline tear glitches in the EVP spectrograph.
-  6. **Infrasonic Room Breath & Sub-Perceptual Carriers** (`synthesize_infrasonic_room_breath` / `dispatch_room_breath` & `synthesize_sub_perceptual_carrier`): `18–24 Hz` standing-wave carrier and low-pass room resonance coupled directly to live CPU `Tctl` thermal load.
-- **Manifestation Rotation**: Automatically cycles across all manifestation archetypes during armed cognitive lulls and manual `CAL: 50-60Hz` calibration pulses.
-
-### 2. Full-Screen Spectral Color-Shift, Gamma LUT & Planchette Drift (`src-tauri/src/display/mod.rs`)
-- **Native Hardware Gamma LUT Controller**: Captures and modulates native OS display transfer tables (`CGSetDisplayTransferByTable` on macOS, `SetDeviceGammaRamp` on Windows, `XF86VidModeSetGammaRamp` on Linux) along a time-stepped `>= 1,200ms` cubic-bezier curve (`P1=(0.42, 0.0)`, `P2=(0.58, 1.0)`) clamped to `<= 8.0%` baseline luminance delta.
-- **Alternating Full-Screen Spectral Color-Shift Modes**:
-  - **Mode 0 — Ectoplasmic Cyan-Violet Phase Inversion**: Crushes the hardware red LUT channel while surging green/blue gamma and applying a synchronized `hue-rotate(155deg)` viewport chromatic phase-shift.
-  - **Mode 1 — Crimson Nightmare Solarization**: Surges the hardware red LUT channel while crushing green/blue channels into a high-contrast blood-red nightmare solarization (`hue-rotate(-55deg)`).
-- **Planchette Cursor Micro-Drift** (`nudge_planchette_cursor`): Applies a subtle `1–3px` Lissajous figure-8 cursor nudge (`CGWarpMouseCursorPosition` / `SetCursorPos` / `XWarpPointer`) at the onset of cognitive lull manifestations.
-- **Live Hardware Gauges**: Samples live CPU junction temperature (`cpu_tctl_celsius`), simulated cold-spot temperature dips (`-4.1°C`), and daemon resident set size (`daemon_mem_mb`) via `sysinfo`.
-
-### 3. Non-Interceptive Telemetry, Cadence Analyzer & REM-Pod Array (`src-tauri/src/telemetry/`)
-- **Privacy-Preserving Idle Hooks**: Queries OS input idle duration (`CGEventSourceSecondsSinceLastEventType` on macOS, `GetLastInputInfo` on Windows, `XScreenSaverQueryInfo` via `libXss.so.1` on Linux) with **zero keylogging** and **zero text capture**.
-- **K-II EMF & REM-Pod Disturbance Array**: 5-step LED telemetry scale (`1.5 mG NORM`, `2.5 mG LOW`, `10 mG MID`, `20 mG HIGH`, `20+ mG SPIKE`) with automatic `22.40 mG` redline spike override during high-energy manifestations.
-- **Witching Hour Vigil Chronometer**: Enforces nocturnal manifestation windows (`00:00–05:00` default) validated in 15-minute increments, with interactive 24-hour timeline scrubbing and a Curfew Time-Gate override.
-- **Resource Footprint Profiler (`profiler.rs`)**: Continually verifies strict operational budgets (`< 0.5%` CPU utilization, `< 30.0 MB` resident memory, and `< 15.0ms` p99 dispatch latency).
-
-### 4. Hardware Exorcise Failsafe Circuit (`src-tauri/src/panic/mod.rs`)
-- **Triple-`[ESC]` Hardware Interrupt (`< 800ms`)**: Lock-free 3-slot monotonic ringbuffer that filters strictly for the `[ESC]` keycode (`0x1B` / `0x35`), discarding all other keystrokes immediately for privacy.
-- **Sub-`50ms` Atomic Emergency Purge**: Depressing `[ESC]` 3 times under `800ms` (or clicking **MANUAL EXORCISE PURGE CIRCUIT**) immediately severs the `cpal` audio ringbuffer, restores unperturbed OS hardware monitor gamma LUTs, clears viewport chromatic filters, logs the incident, and forces the daemon into `NonHookStasis` deep sleep.
-- **Crash & Signal Safety**: Installs `std::panic::set_hook` and POSIX signal handlers (`SIGINT`, `SIGTERM`, `SIGHUP`) to guarantee hardware gamma LUT restoration on unexpected termination.
-
-### 5. Séance Panel UI, Tauri v2 IPC Bridge & System Tray (`src/`, `src-tauri/src/ipc/mod.rs`, `src-tauri/src/tray/mod.rs`)
-- **Real-Time 150ms CRT Sweep Loop**: Streams `TelemetrySnapshot` payloads over Tauri v2 events (`telemetry:sweep`) to drive the 64-point phosphor-green **CRT EVP Spectrograph** (with `20+ mG` redline horizontal tear glitches), K-II LEDs, thermocouple gauges, and incident audit log.
-- **Full Interactive Console Controls**: Wired to 14 strongly typed Tauri v2 IPC commands (`get_telemetry_snapshot`, `get_profile_config`, `get_recent_incident_logs`, `set_vigil_bracket`, `toggle_curfew_mode`, `trigger_calibration_pulse`, `set_surveillance_bound`, `toggle_intervention_channel`, `set_intensity_detent`, `set_cognitive_lull_window`, `trigger_manual_exorcise`, `record_escape_key_press`, `hide_seance_panel`, `quit_application`).
-- **Headless Tray & Ergonomic Windowing**: Runs under macOS `ActivationPolicy::Accessory` with system tray menu controls (`1h` / `4h` / `8h` dormant timers, immediate Exorcise, clean Quit) and a centered `1240×820` frameless window with isolated close (`×` `Cmd+Q`) and hide-to-tray (`−` `Cmd+W`) controls.
-
-### 6. Local SQLite WAL Persistence & Zero-Egress Supply-Chain Security (`src-tauri/src/db/`, `src-tauri/src/security/`)
-- **Embedded SQLite Store (`nocturne_telemetry.db`)**: Configured with `PRAGMA journal_mode=WAL`, `STRICT` schema validation, `0700`/`0600` Unix file permissions, transactional profile upserts, and a 10,000-row rolling audit cap.
-- **Zero-Egress Air-Gap Enforcement**:
-  - Compile-time and runtime verification via `AirGapEnforcer` and POSIX `AF_INET`/`AF_INET6` open-descriptor scrubbing.
-  - Strict WebView Content Security Policy (`default-src 'self'; connect-src 'none'`), macOS Seatbelt sandbox profile ([`nocturne-airgap.sb`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/nocturne-airgap.sb)), and zero-network [`Entitlements.plist`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/Entitlements.plist).
-  - Automated supply-chain CI ([`.github/workflows/release-security.yml`](file:///Volumes/External/boredpolymath/projects/nocturne/.github/workflows/release-security.yml)), `cargo-deny` v2 license & source policy ([`deny.toml`](file:///Volumes/External/boredpolymath/projects/nocturne/deny.toml)), CycloneDX 1.5 SBOM ([`sbom.cdx.json`](file:///Volumes/External/boredpolymath/projects/nocturne/sbom.cdx.json)), and reproducible artifact checksums ([`SHA256SUMS.txt`](file:///Volumes/External/boredpolymath/projects/nocturne/SHA256SUMS.txt)).
+</div>
 
 ---
 
-## Repository Structure
+## What is Nocturne?
 
-- [`src/`](file:///Volumes/External/boredpolymath/projects/nocturne/src) — **Séance Panel Presentation Layer** (HTML5, CSS3 scanline & CRT styling, Canvas EVP Spectrograph)
-  - [`src/index.html`](file:///Volumes/External/boredpolymath/projects/nocturne/src/index.html) — Main telemetry & control console markup
-  - [`src/styles/main.css`](file:///Volumes/External/boredpolymath/projects/nocturne/src/styles/main.css) — Monochromatic occult telemetry & rackmount hardware stylesheet
-  - [`src/js/app.js`](file:///Volumes/External/boredpolymath/projects/nocturne/src/js/app.js) — CRT EVP Spectrograph canvas renderer, full-screen spectral filter sync & Tauri v2 IPC bindings
-- [`src-tauri/`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri) — **Rust Core Daemon & Telemetry Engine**
-  - [`src-tauri/src/lib.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/lib.rs) & [`main.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/main.rs) — Daemon entry point, 150ms sweep broadcaster & Tauri builder
-  - [`src-tauri/src/ipc/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/ipc/mod.rs) — Strongly typed Tauri v2 IPC command handlers & manifestation rotation dispatcher
-  - [`src-tauri/src/telemetry/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/telemetry/mod.rs) & [`profiler.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/telemetry/profiler.rs) — Non-interceptive OS idle hooks, vigil chronometer, REM-Pod EMF calculator & resource profiler
-  - [`src-tauri/src/audio/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/audio/mod.rs) — `cpal` lock-free stereo ringbuffer & 6-mode procedural acoustic synthesis engine
-  - [`src-tauri/src/display/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/display/mod.rs) — Native OS display gamma LUT controller, full-screen spectral color-shift & Lissajous planchette cursor drift
-  - [`src-tauri/src/panic/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/panic/mod.rs) — Hardware Exorcise failsafe circuit (`[ESC]` 3× under `800ms`) & signal restoration hooks
-  - [`src-tauri/src/db/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/db/mod.rs) — Embedded SQLite (`WAL` mode) local persistence store with 10,000-row rolling retention
-  - [`src-tauri/src/tray/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/tray/mod.rs) — Headless system tray lifecycle manager & dormant timer controller
-  - [`src-tauri/src/security/mod.rs`](file:///Volumes/External/boredpolymath/projects/nocturne/src-tauri/src/security/mod.rs) — Zero-egress air-gap auditor & POSIX network socket scrubber
-- [`scripts/generate_release_integrity.py`](file:///Volumes/External/boredpolymath/projects/nocturne/scripts/generate_release_integrity.py) — Deterministic CycloneDX 1.5 SBOM & `SHA256SUMS.txt` generator/verifier
+**Nocturne** turns your computer into a subtly haunted late-night research station.
+
+Designed with the tactile aesthetic of a 1970s rackmount **REM-Pod and CRT EVP Spectrograph**, Nocturne sits quietly in your system tray (`< 0.5%` CPU, `< 30 MB` RAM). During the witching hours (**00:00–05:00** by default, or any time you flip the **Curfew Override** switch), it watches for natural lulls in your typing and mouse movement.
+
+When you pause to think and the room goes quiet, Nocturne answers:
+
+- **Headphone-tracked binaural acoustics** — a floorboard creaks softly to your left, a buckling-spring key clicks once after you take your hands off the keyboard, or a faint 3-formant whisper sweeps across the stereo field. Every sound is synthesized mathematically in real time—**zero pre-recorded audio files**.
+- **Subtle display & cursor anomalies** — your monitor's color temperature shifts imperceptibly over several seconds, or your mouse cursor drifts 2 pixels in a gentle figure-8 planchette curve.
+- **Live CRT telemetry** — open the **Séance Panel** at any time to watch the 64-point phosphor-green oscilloscope, K-II EMF LED ladder, CPU thermal "cold-spot" gauges, and timestamped incident log react in real time.
+- **Instant triple-`ESC` failsafe** — tap `ESC` `ESC` `ESC` at any time (or click the big red **Exorcise** button) to sever all audio, restore hardware monitor color profiles in under **50 milliseconds**, and lock the daemon into deep sleep.
 
 ---
 
-## Development, Testing & Verification
+## Install & Summon
+
+Pre-built, zero-dependency desktop binaries are published on [**GitHub Releases**](https://github.com/boredpolymath/nocturne/releases/latest) for macOS, Windows, and Linux:
+
+| Platform | Architecture | Download |
+| :--- | :--- | :--- |
+| **macOS** | Apple Silicon (`M1`–`M4`) | [Download `nocturne-aarch64-apple-darwin.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-aarch64-apple-darwin.tar.gz) |
+| **macOS** | Intel (`x86_64`) | [Download `nocturne-x86_64-apple-darwin.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-apple-darwin.tar.gz) |
+| **Windows** | x64 (`Windows 10/11`) | [Download `nocturne-x86_64-pc-windows-msvc.zip`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-pc-windows-msvc.zip) |
+| **Linux** | x64 (`Ubuntu/Debian/Fedora`) | [Download `nocturne-x86_64-unknown-linux-gnu.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-unknown-linux-gnu.tar.gz) |
+
+> **Want to experience it before installing?** Try the [**Interactive Browser Séance**](https://boredpolymath.github.io/nocturne/) (best with headphones).
+
+### Your First 60 Seconds with Nocturne
+
+1. **Launch the console**: Start `nocturne-daemon`. The **Séance Panel** opens alongside a persistent system tray icon.
+2. **Test outside midnight hours**: By default, Nocturne only manifests between `00:00` and `05:00`. To experience it during the day, toggle **Curfew Time-Gate Override** in the console or click **`CAL: 50-60Hz`** to fire an immediate calibration manifestation.
+3. **Customize your channels**: Enable or disable individual subsystems (**Acoustic Engine**, **Gamma LUT Shift**, or **Planchette Drift**), dial the **Intensity Detent** (`Subtle`, `Nominal`, `Aggressive`), or adjust the **Cognitive Lull Window** (`4.0s–15.0s` of inactivity before a manifestation triggers).
+4. **Hit the panic switch**: Press `ESC` three times rapidly (`< 800ms`) or click **MANUAL EXORCISE PURGE CIRCUIT** to verify the hardware failsafe.
+
+---
+
+## What Happens in the Silence
+
+### 1. Real-Time Procedural Acoustic Engine (`48 kHz` Stereo DSP)
+Nocturne contains **zero `.wav` or `.mp3` files**. A lock-free stereo ringbuffer streams 32-bit float PCM directly to your audio device via `cpal`, synthesizing six distinct phenomena on the fly:
+
+| Manifestation | What You Hear | How It's Synthesized |
+| :--- | :--- | :--- |
+| **Spatial Floorboard Creaks** | Aged timber flexing slowly to your left or right | Multi-modal stick-slip wood resonance with interaural time/level difference (ITD/ILD) panning and CPU temperature pitch coupling |
+| **Phantom Keystroke Echoes** | A single ghost key press `2.5s` after you stop typing | `3.2 kHz` buckling-spring transient paired with a `420 Hz` damped keycap bottom-out |
+| **Spirit-Box EVP Whispers** | Faint, unintelligible syllables sweeping past your ears | Band-limited aspiration noise sculpted through a 3-formant vocal tract (`F1`/`F2`/`F3`) with `5.5 Hz` syllabic modulation |
+| **Wall-Stud Double-Knocks** | Two hollow raps inside the wall + a vintage relay click | `145 Hz` structural timber impulse (`165ms` interval) followed by a `2,400 Hz` reed-relay transient |
+| **Redline 50/60 Hz Mains Hum** | Heavy transformer ground-loop hum & static crackle | `55/110/165 Hz` harmonic stack with `1,800 Hz` corona discharge, synced with CRT horizontal tear glitches |
+| **Infrasonic Room Breath** | A subtle "fullness" in the air during high CPU load | `18–24 Hz` low-pass room standing-wave carrier modulated by live CPU junction temperature (`Tctl`) |
+
+Every sample passes through a hard psychoacoustic limiter (`+6 dB` to `+18 dB` over a `-44.2 dBFS` ambient floor) so it never jump-scares or blasts your eardrums.
+
+### 2. Spectral Color-Shifts & Planchette Drift
+- **Hardware Monitor Gamma Perturbation**: Gently nudges native OS display color tables (`CoreGraphics` on macOS, `GDI` on Windows, `XF86VidMode` on Linux) along a smooth `>= 1,200ms` cubic-bezier curve, strictly clamped to **`<= 8.0%`** luminance delta.
+- **Bimodal Spectral Phases**: Alternates between *Ectoplasmic Cyan-Violet Phase Inversion* and *Crimson Nightmare Solarization*.
+- **Lissajous Planchette Micro-Drift**: Applies a subtle `1–3px` figure-8 nudge to the cursor at the onset of a lull—just enough to make you wonder if you bumped the desk.
+
+### 3. The Séance Panel & System Tray
+- **150ms CRT Sweep Loop**: Renders a live 64-point phosphor-green oscilloscope, a 5-stage **K-II EMF LED meter** (`1.5 mG` to `20+ mG SPIKE`), live CPU thermal & simulated `-4.1°C` cold-spot gauges, and a persistent SQLite incident log.
+- **Headless Tray Operation**: Close or minimize the window (`Cmd+W` / `−`) to let Nocturne run silently in the menu bar or system tray, complete with quick snooze timers (`1h`, `4h`, `8h`).
+
+---
+
+## Privacy & Safety Guarantees
+
+A daemon that watches for user inactivity and touches hardware display tables must be uncompromisingly trustworthy:
+
+- **Zero Keylogging**: Nocturne **never** reads what you type. It queries only the OS-level idle timer ("seconds since last input event" via `CGEventSourceSecondsSinceLastEventType` / `GetLastInputInfo` / `XScreenSaverQueryInfo`). Even the triple-`ESC` failsafe filters exclusively for keycode `0x1B` in a 3-slot timestamp ringbuffer and drops all other input unread.
+- **100% Air-Gapped (Zero Network Egress)**: Nocturne has no telemetry servers, no analytics, no auto-updater, and no network crates (`reqwest`, `hyper`, `curl`, `openssl`, and `rustls` are explicitly banned in [`deny.toml`](deny.toml)). At startup, `AirGapEnforcer` inspects open POSIX file descriptors to ensure zero `AF_INET`/`AF_INET6` sockets exist, backed by a strict `connect-src 'none'` CSP and macOS Seatbelt sandbox ([`nocturne-airgap.sb`](src-tauri/nocturne-airgap.sb)).
+- **Guaranteed Hardware Restoration**: `std::panic::set_hook` and POSIX signal handlers (`SIGINT`, `SIGTERM`, `SIGHUP`) ensure that even if the process is killed or crashes, your monitor's original hardware gamma table is immediately restored.
+
+---
+
+## Contributing & Hacking on Nocturne
+
+We love contributors—whether you're into **real-time audio DSP**, **low-level OS systems programming in Rust**, **retro CRT hardware interfaces**, or **paranormal lore**.
+
+### Why Hack on This Repo?
+- **Pure Rust DSP Playground**: Write mathematical sound synthesizers in [`src-tauri/src/audio/mod.rs`](src-tauri/src/audio/mod.rs) and see them immediately on a live 64-point CRT oscilloscope.
+- **Zero-Framework Frontend**: The Séance Panel ([`src/`](src/)) is built with clean, dependency-free HTML5, CSS3, and Canvas—no webpack, no Virtual DOM bloat, instant reload.
+- **Clean, Well-Tested Codebase**: 54 fast unit and integration tests covering audio synthesis, gamma curve clamping, SQLite WAL retention, panic failsafes, and air-gap verification.
+
+### Ideas for Your First Pull Request
+- **New Acoustic Manifestations**: Synthesize Geiger counter ticks, grandfather clock pendulum stops, distant Morse code carriers, or vinyl run-out groove crackle.
+- **New CRT Visualizer Modes**: Add an X-Y Lissajous vector scope mode or waterfall spectrogram toggle to the Séance Panel canvas.
+- **Platform & Display Enhancements**: Native Wayland gamma control (`wlr-gamma-control-unstable-v1`) or multi-monitor staggered wave propagation.
+- **Custom Vigil Profiles**: Import/export haunting presets or lunar-phase manifestation multipliers.
+
+Check out [**CONTRIBUTING.md**](CONTRIBUTING.md) for architecture details, safety invariants, and step-by-step instructions.
+
+---
+
+## Build from Source
+
+### Prerequisites
+- **Rust** `1.77.2+` (`rustup` will automatically select the pinned toolchain via [`rust-toolchain.toml`](rust-toolchain.toml))
+- **Node.js** `18+` (used only for the `@tauri-apps/cli` runner)
+- **Linux only**: System headers for WebKitGTK and ALSA:
+  ```bash
+  sudo apt-get install -y build-essential pkg-config libssl-dev libwebkit2gtk-4.1-dev \
+    libayatana-appindicator3-dev librsvg2-dev patchelf libasound2-dev libxss-dev libxrandr-dev
+  ```
+
+### Quickstart Commands
 
 ```bash
-# Run the full Rust unit & integration test suite (54 tests across audio, display, db, panic, security, telemetry, tray)
+# 1. Clone the repository
+git clone https://github.com/boredpolymath/nocturne.git
+cd nocturne
+
+# 2. Install the Tauri CLI wrapper
+npm install
+
+# 3. Run the 54-test suite across all subsystems
 cargo test --workspace
 
-# Enforce zero Clippy warnings and strict Rustfmt formatting
+# 4. Launch Nocturne in development mode with hot-reload
+npm run dev
+
+# 5. Build a production desktop bundle for your OS
+npm run build
+```
+
+### Verification & Supply-Chain Checks
+
+```bash
+# Run Clippy with warnings-as-errors and verify Rustfmt formatting
 npm run lint:rust
 npm run fmt:rust
 
-# Verify deterministic CycloneDX SBOM & SHA-256 release integrity manifests
+# Verify deterministic CycloneDX 1.5 SBOM & SHA-256 source checksums
 python3 scripts/generate_release_integrity.py --verify
-
-# Launch the Nocturne MK-IV daemon & Séance Panel in development mode
-npm run dev
 ```
+
+---
+
+## Repository Map
+
+```text
+nocturne/
+├── src/                            # Séance Panel Frontend (HTML5 / CSS3 / Canvas CRT)
+│   ├── index.html                  # Rackmount console layout & K-II EMF meters
+│   ├── styles/main.css             # Phosphor-green CRT & industrial hardware styling
+│   └── js/app.js                   # 64-pt oscilloscope renderer & Tauri v2 IPC bridge
+├── src-tauri/                      # Rust Core Daemon & Telemetry Engine
+│   ├── src/audio/mod.rs            # 48 kHz lock-free PCM ringbuffer & 6-mode DSP synth
+│   ├── src/display/mod.rs          # Native OS gamma LUT curves & planchette cursor drift
+│   ├── src/telemetry/              # OS idle hooks, vigil chronometer & resource profiler
+│   ├── src/panic/mod.rs            # Triple-ESC (<800ms) hardware exorcise failsafe
+│   ├── src/db/mod.rs               # Embedded SQLite (WAL) config & 10k-row incident log
+│   ├── src/security/mod.rs         # Zero-egress POSIX socket scrubber & air-gap auditor
+│   ├── src/tray/mod.rs             # System tray lifecycle & snooze timer controller
+│   └── src/ipc/mod.rs              # 14 strongly typed Tauri v2 command handlers
+├── website/                        # Interactive GitHub Pages demo ("Your computer is not alone")
+├── scripts/                        # Reproducible CycloneDX SBOM & SHA-256 generator
+└── deny.toml                       # Cargo-deny air-gap crate bans & license policy
+```
+
+---
+
+## Community & Governance
+
+- [**Contributing Guide**](CONTRIBUTING.md) — How to set up your environment, add new manifestations, and submit PRs.
+- [**Code of Conduct**](CODE_OF_CONDUCT.md) — Our commitment to a welcoming, harassment-free community.
+- [**Security Policy**](SECURITY.md) — Air-gap architecture, supply-chain verification, and how to report vulnerabilities.
+- [**License**](LICENSE) — Dual-licensed under **MIT** or **Apache-2.0** at your option.

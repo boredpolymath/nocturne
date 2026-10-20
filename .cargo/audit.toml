@@ -1,0 +1,8 @@
+# Project Nocturne (MK-IV) — Cargo Audit Configuration
+# See SECURITY.md for full transitive advisory evaluations.
+
+[advisories]
+ignore = [
+    "RUSTSEC-2024-0370", # proc-macro-error 1.0.4 (transitive Linux GTK3 compile-time macro via tauri -> gtk 0.18)
+    "RUSTSEC-2024-0429", # glib 0.18.5 VariantStrIter (unreachable dead code in Tauri v2 GTK3 stack; stripped by LTO)
+]

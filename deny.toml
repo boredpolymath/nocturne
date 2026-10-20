@@ -12,6 +12,12 @@ targets = [
 [advisories]
 version = 2
 yanked = "warn"
+ignore = [
+    # Transitive Linux GTK3 macro helper via tauri -> gtk v0.18; compile-time only, no runtime impact.
+    { id = "RUSTSEC-2024-0370", reason = "Transitive build-time macro dependency of gtk v0.18 (Tauri v2 Linux backend)" },
+    # Unsoundness in glib::VariantStrIter::impl_get; unreachable dead code (never called in Nocturne or Tauri/GTK).
+    { id = "RUSTSEC-2024-0429", reason = "VariantStrIter is never called in Nocturne or transitive Tauri dependencies; stripped by LTO" },
+]
 
 [licenses]
 version = 2

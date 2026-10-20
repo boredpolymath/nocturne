@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Security Vulnerability Report"
+    url: "https://github.com/boredpolymath/nocturne/security/advisories/new"
+    about: "Please report security, privacy, or failsafe vulnerabilities privately via GitHub Security Advisories."
+  - name: "Interactive Browser Demo"
+    url: "https://boredpolymath.github.io/nocturne/"
+    about: "Experience Nocturne MK-IV directly in your browser before opening an issue."
