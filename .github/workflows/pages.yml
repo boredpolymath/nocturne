@@ -33,7 +33,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p website/downloads
-          gh release download v0.1.0 --dir website/downloads || true
+          TAG=$(gh release view --json tagName -q .tagName 2>/dev/null || echo "v0.1.0")
+          echo "Fetching assets from latest release: $TAG"
+          gh release download "$TAG" --dir website/downloads || true
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
