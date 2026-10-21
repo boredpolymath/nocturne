@@ -7,7 +7,7 @@
             Version="{{VERSION}}"
             ProcessorArchitecture="x64" />
   <Properties>
-    <DisplayName>Nocturne</DisplayName>
+    <DisplayName>Nocturne: Haunted Desktop</DisplayName>
     <PublisherDisplayName>{{PUBLISHER_DISPLAY_NAME}}</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -24,7 +24,7 @@
     <Application Id="NocturneApp"
                  Executable="nocturne-daemon.exe"
                  EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements DisplayName="Nocturne"
+      <uap:VisualElements DisplayName="Nocturne: Haunted Desktop"
                           Description="NOCTURNE MK-IV // PARANORMAL TELEMETRY UNIT"
                           BackgroundColor="transparent"
                           Square150x150Logo="Assets\Square150x150Logo.png"

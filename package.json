@@ -1,6 +1,6 @@
 {
   "name": "nocturne",
-  "version": "1.0.4",
+  "version": "1.4.7",
   "description": "Project Nocturne (MK-IV) — Ambient Workstation Poltergeist Daemon & Paranormal Telemetry Unit",
   "private": true,
   "type": "module",

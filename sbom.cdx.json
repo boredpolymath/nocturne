@@ -6,7 +6,7 @@
     "component": {
       "type": "application",
       "name": "nocturne-daemon",
-      "version": "1.0.4",
+      "version": "1.4.7",
       "description": "Project Nocturne (MK-IV) \u2014 Ambient Workstation Poltergeist Daemon"
     },
     "properties": [
@@ -132,7 +132,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "06771fefd00e6fd36e7d5581e85d59f63c13dd0a51ba6f6506df0ba72cbea0ed"
+          "content": "73791108cfbdab13a7c903d4fb792352b2ab9d4d336fe41e9ddbfbca3a874d3e"
         }
       ]
     },
@@ -152,7 +152,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "abdaf99b39f6a949a8a1c9ca743fe11d7ce4baf66f839ac4e2e8c8b21ab5af84"
+          "content": "9fd6768cd49f9e5d7039754343735d55b578227a25163f2333cc1d9d85b359da"
         }
       ]
     },
@@ -342,7 +342,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "06493050f84b36531ea8dd6c91b26714fc288e70cfe1d8d3973208527a0ec4a7"
+          "content": "12eff23bc93924608ec254724323c63761be4f519319093e79384af146adf89f"
         }
       ]
     },
@@ -352,7 +352,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "250660609a67966471f2c569c514cca500b5df9ba1465bb9c2658d996b197bcb"
+          "content": "e0e05239e212ad68b58456c17765c51b91d84106b2719bd02ed96d2ebca63ccc"
         }
       ]
     },

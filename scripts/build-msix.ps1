@@ -2,7 +2,7 @@ param(
     [string]$PackageName = $env:MSIX_PACKAGE_NAME,
     [string]$Publisher = $env:MSIX_PUBLISHER,
     [string]$PublisherDisplayName = $env:MSIX_PUBLISHER_DISPLAY_NAME,
-    [string]$Version = "1.0.4.0",
+    [string]$Version = "1.4.7.0",
     [string]$BinaryPath = "target\x86_64-pc-windows-msvc\release\nocturne-daemon.exe",
     [string]$OutputFile = "nocturne-windows-x64.msix"
 )

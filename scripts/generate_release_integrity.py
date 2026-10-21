@@ -106,7 +106,7 @@ def main() -> int:
             "component": {
                 "type": "application",
                 "name": "nocturne-daemon",
-                "version": "1.0.4",
+                "version": "1.4.7",
                 "description": "Project Nocturne (MK-IV) — Ambient Workstation Poltergeist Daemon",
             },
             "properties": [

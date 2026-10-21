@@ -111,7 +111,7 @@
   }
 
   // Seed initial log entries
-  appendLog("nocturne-mk-iv daemon v1.0.4-RELEASE initialized (AirGapEnforcer: ARMED)");
+  appendLog("nocturne-mk-iv daemon v1.4.7-RELEASE initialized (AirGapEnforcer: ARMED)");
   appendLog("POSIX AF_INET / AF_INET6 descriptor scrub: 0 open sockets");
   appendLog("SQLite WAL telemetry store mounted (rolling cap: 10,000 rows)");
   appendLog("observer session detected on viewport — idle hooks attached", "you");

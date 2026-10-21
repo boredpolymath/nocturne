@@ -166,7 +166,7 @@ jobs:
           MSIX_PUBLISHER: ${{ secrets.MSIX_PUBLISHER }}
           MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
         run: |
-          .\scripts\build-msix.ps1 -Version "1.0.4.0" -OutputFile "nocturne-windows-x64.msix"
+          .\scripts\build-msix.ps1 -Version "1.4.7.0" -OutputFile "nocturne-windows-x64.msix"
 
       - name: Package Deliverable (Unix)
         if: "!matrix.is_windows"
