@@ -57,24 +57,28 @@ jobs:
             alias_name: nocturne-macos-arm64.tar.gz
             binary_name: nocturne-daemon
             is_windows: false
+            is_macos: true
           - os: macos-15-intel
             target: x86_64-apple-darwin
             archive_name: nocturne-x86_64-apple-darwin.tar.gz
             alias_name: nocturne-macos-x64.tar.gz
             binary_name: nocturne-daemon
             is_windows: false
+            is_macos: true
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             archive_name: nocturne-x86_64-pc-windows-msvc.zip
             alias_name: nocturne-windows-x64.zip
             binary_name: nocturne-daemon.exe
             is_windows: true
+            is_macos: false
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             archive_name: nocturne-x86_64-unknown-linux-gnu.tar.gz
             alias_name: nocturne-linux-x86_64.tar.gz
             binary_name: nocturne-daemon
             is_windows: false
+            is_macos: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -92,6 +96,47 @@ jobs:
 
       - name: Build Target Executable
         run: cargo build --workspace --release --target ${{ matrix.target }}
+
+      - name: Setup macOS Signing & Notarization
+        if: matrix.is_macos && env.APPLE_CERTIFICATE != ''
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -t 3600 -u "$KEYCHAIN_PATH"
+
+          CERT_PATH=$RUNNER_TEMP/certificate.p12
+          echo "$APPLE_CERTIFICATE" | base64 --decode > "$CERT_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+      - name: Build and Notarize macOS DMG
+        if: matrix.is_macos
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          npm install --no-audit --no-fund
+          npx tauri build --target ${{ matrix.target }} --bundles dmg,app || true
+          dmgFiles=$(find target src-tauri/target -name "*.dmg" 2>/dev/null || true)
+          if [ -n "$dmgFiles" ]; then
+            for f in $dmgFiles; do
+              cp "$f" "$(basename "$f")"
+              if [[ "${{ matrix.target }}" == "aarch64-apple-darwin" ]]; then
+                cp "$f" "nocturne-macos-arm64.dmg"
+              else
+                cp "$f" "nocturne-macos-x64.dmg"
+              fi
+            done
+          fi
 
       - name: Build Windows Installers (MSI & NSIS EXE)
         if: matrix.is_windows
@@ -140,6 +185,7 @@ jobs:
             ${{ matrix.alias_name }}
             *.msi
             *-setup.exe
+            *.dmg
           if-no-files-found: error
 
   publish-release:
