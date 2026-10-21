@@ -158,6 +158,16 @@ jobs:
             Copy-Item -Path $f.FullName -Destination "nocturne-windows-x64-setup.exe" -Force
           }
 
+      - name: Build MSIX Package for Microsoft Store
+        if: matrix.is_windows
+        shell: pwsh
+        env:
+          MSIX_PACKAGE_NAME: ${{ secrets.MSIX_PACKAGE_NAME }}
+          MSIX_PUBLISHER: ${{ secrets.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ secrets.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          .\scripts\build-msix.ps1 -Version "1.0.4.0" -OutputFile "nocturne-windows-x64.msix"
+
       - name: Package Deliverable (Unix)
         if: "!matrix.is_windows"
         run: |
@@ -186,6 +196,7 @@ jobs:
             *.msi
             *-setup.exe
             *.dmg
+            *.msix
           if-no-files-found: error
 
   publish-release:
