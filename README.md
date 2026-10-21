@@ -35,14 +35,15 @@ When you pause to think and the room goes quiet, Nocturne answers:
 
 ## Install & Summon
 
-Pre-built, zero-dependency desktop binaries are published on [**GitHub Releases**](https://github.com/boredpolymath/nocturne/releases/latest) for macOS, Windows, and Linux:
+Pre-built desktop deliverables and zero-dependency installers are published on [**GitHub Releases**](https://github.com/boredpolymath/nocturne/releases/latest) as well as direct zero-redirect downloads on the [**Official Website**](https://boredpolymath.github.io/nocturne/):
 
-| Platform | Architecture | Download |
+| Platform | Format / Architecture | Download Links |
 | :--- | :--- | :--- |
-| **macOS** | Apple Silicon (`M1`–`M4`) | [Download `nocturne-aarch64-apple-darwin.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-aarch64-apple-darwin.tar.gz) |
-| **macOS** | Intel (`x86_64`) | [Download `nocturne-x86_64-apple-darwin.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-apple-darwin.tar.gz) |
-| **Windows** | x64 (`Windows 10/11`) | [Download `nocturne-x86_64-pc-windows-msvc.zip`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-pc-windows-msvc.zip) |
-| **Linux** | x64 (`Ubuntu/Debian/Fedora`) | [Download `nocturne-x86_64-unknown-linux-gnu.tar.gz`](https://github.com/boredpolymath/nocturne/releases/latest/download/nocturne-x86_64-unknown-linux-gnu.tar.gz) |
+| **macOS** | Apple Silicon (`M1`–`M4`) | [**Signed & Notarized DMG**](https://boredpolymath.github.io/nocturne/downloads/nocturne-macos-arm64.dmg) · [`.tar.gz`](https://boredpolymath.github.io/nocturne/downloads/nocturne-macos-arm64.tar.gz) |
+| **macOS** | Intel (`x86_64`) | [**Signed & Notarized DMG**](https://boredpolymath.github.io/nocturne/downloads/nocturne-macos-x64.dmg) · [`.tar.gz`](https://boredpolymath.github.io/nocturne/downloads/nocturne-macos-x64.tar.gz) |
+| **Windows** | Windows Installer (`MSI`) | [**Windows MSI Package**](https://boredpolymath.github.io/nocturne/downloads/nocturne-windows-x64.msi) |
+| **Windows** | Standalone Setup (`NSIS .exe`) | [**NSIS Standalone Setup**](https://boredpolymath.github.io/nocturne/downloads/nocturne-windows-x64-setup.exe) · [`.zip`](https://boredpolymath.github.io/nocturne/downloads/nocturne-windows-x64.zip) |
+| **Linux** | x64 (`Ubuntu/Debian/Fedora`) | [**Binary Deliverable (`.tar.gz`)**](https://boredpolymath.github.io/nocturne/downloads/nocturne-linux-x86_64.tar.gz) |
 
 > **Want to experience it before installing?** Try the [**Interactive Browser Séance**](https://boredpolymath.github.io/nocturne/) (best with headphones).
 
@@ -172,7 +173,8 @@ nocturne/
 │   ├── src/security/mod.rs         # Zero-egress POSIX socket scrubber & air-gap auditor
 │   ├── src/tray/mod.rs             # System tray lifecycle & snooze timer controller
 │   └── src/ipc/mod.rs              # 14 strongly typed Tauri v2 command handlers
-├── website/                        # Interactive GitHub Pages demo ("Your computer is not alone")
+├── assets/                         # Visual brand assets & 1080x1080 1:1 store box art
+├── website/                        # Interactive GitHub Pages demo & direct zero-redirect download host
 ├── scripts/                        # Reproducible CycloneDX SBOM & SHA-256 generator
 └── deny.toml                       # Cargo-deny air-gap crate bans & license policy
 ```
