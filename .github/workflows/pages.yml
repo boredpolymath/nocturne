@@ -28,6 +28,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
+      - name: Fetch Latest Release Deliverables
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p website/downloads
+          gh release download v0.1.0 --dir website/downloads || true
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
