@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Same promise as the daemon: this page talks to no one. -->
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'"
+  />
+  <title>Privacy Policy — Nocturne MK-IV</title>
+  <meta name="description" content="Privacy Policy for Nocturne (Nocturne: Haunted Desktop). 100% local-first, zero egress, zero keylogging, zero data collection." />
+  <meta name="theme-color" content="#050607" />
+  <meta property="og:title" content="Privacy Policy — Nocturne MK-IV" />
+  <meta property="og:description" content="Nocturne collects zero personal data, opens zero network sockets, and never logs what you type. Read our full privacy policy." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Atmosphere layers -->
+  <div class="fx fx-scanlines" aria-hidden="true"></div>
+  <div class="fx fx-vignette" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <header class="nav" id="top">
+    <a class="nav__brand" href="index.html" aria-label="Nocturne home">
+      <svg class="nav__sigil" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1"/>
+        <path d="M16 4 L16 28 M6 22 L26 22" stroke="currentColor" stroke-width="1"/>
+        <circle cx="16" cy="13" r="3.2" fill="currentColor"/>
+      </svg>
+      <span class="nav__name">NOCTURNE</span>
+      <span class="nav__tag">PRIVACY</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="index.html#lull">The Lull</a>
+      <a href="index.html#spectral">Spectral</a>
+      <a href="index.html#exorcise">Exorcise</a>
+      <a href="index.html#summon">Summon</a>
+      <a href="https://github.com/boredpolymath/nocturne" rel="noopener">GitHub</a>
+    </nav>
+    <a class="btn btn--ghost nav__cta" href="index.html#summon">Download</a>
+  </header>
+
+  <main class="legal-doc">
+    <header class="legal-header">
+      <p class="eyebrow mono">§ Legal & Compliance // Store Policy 10.5</p>
+      <h1>Privacy Policy</h1>
+      <p class="section__lede">
+        Project Nocturne is engineered under an absolute zero-egress, air-gapped guarantee:
+        it collects no personal data, logs zero keystrokes, and communicates with no remote servers.
+      </p>
+
+      <div class="legal-meta">
+        <div><strong>Product:</strong> Nocturne (Nocturne: Haunted Desktop)</div>
+        <div><strong>Publisher:</strong> boredpolymath</div>
+        <div><strong>Effective Date:</strong> October 22, 2026</div>
+        <div><strong>Last Updated:</strong> October 22, 2026</div>
+      </div>
+    </header>
+
+    <article class="legal-body">
+      <div class="legal-callout">
+        <p style="margin: 0; color: var(--bone);">
+          <strong>Executive Summary:</strong> Nocturne does not want your data. It does not collect, record, process, sell, transmit, or share any personal information, keystrokes, audio, or device identifiers. All audio DSP and manifestation algorithms run 100% locally on your machine with zero network egress.
+        </p>
+      </div>
+
+      <h2>1. Overview and Scope</h2>
+      <p>
+        This Privacy Policy applies to the <strong>Nocturne</strong> desktop application (including packages distributed as <em>"Nocturne: Haunted Desktop"</em> for Windows, macOS, and Linux) and the official project website hosted at <code>https://boredpolymath.github.io/nocturne/</code>.
+      </p>
+      <p>
+        Nocturne is published by <strong>boredpolymath</strong> as an open-source ambient entertainment desktop companion. This policy outlines our complete technical commitments and explains how our architecture guarantees your privacy.
+      </p>
+
+      <h2>2. Information We Do NOT Collect</h2>
+      <p>
+        In accordance with Microsoft Store Policies (10.5.1 and 10.5.2), Apple App Store guidelines, the European General Data Protection Regulation (GDPR), and the California Consumer Privacy Act (CCPA), we disclose the following exhaustive data collection status:
+      </p>
+
+      <table class="legal-table">
+        <thead>
+          <tr>
+            <th>Data Category</th>
+            <th>Collection Status</th>
+            <th>Technical Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Personal Identifiers</strong><br /><small class="mono dim">Name, email, phone, IP, address</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Collected</span></td>
+            <td>No user accounts, sign-ins, licenses, or identification systems exist in the software.</td>
+          </tr>
+          <tr>
+            <td><strong>Keystrokes & Text Input</strong><br /><small class="mono dim">Typed words, passwords, clipboard</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Collected</span></td>
+            <td>Nocturne never installs keyloggers, text listeners, or clipboard inspectors. See Section 3 for idle detection details.</td>
+          </tr>
+          <tr>
+            <td><strong>Microphone & Ambient Audio</strong><br /><small class="mono dim">Voice recordings, environmental sound</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Collected</span></td>
+            <td>Nocturne never requests microphone access. All audio is procedurally synthesized via mathematical DSP oscillators.</td>
+          </tr>
+          <tr>
+            <td><strong>Screen & Camera Video</strong><br /><small class="mono dim">Screenshots, webcam feed, window titles</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Collected</span></td>
+            <td>Nocturne has no screenshot, OCR, webcam, or window content recording mechanisms.</td>
+          </tr>
+          <tr>
+            <td><strong>Geolocation</strong><br /><small class="mono dim">GPS, Wi-Fi tri-angulation, IP location</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Collected</span></td>
+            <td>No location services, GPS sensors, or IP lookup functions are utilized or compiled into the software.</td>
+          </tr>
+          <tr>
+            <td><strong>Network Telemetry & Analytics</strong><br /><small class="mono dim">Usage analytics, crash reports, beaconing</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Transmitted</span></td>
+            <td>Nocturne contains zero tracking SDKs, zero telemetry collectors, and zero crash reporting beacons.</td>
+          </tr>
+          <tr>
+            <td><strong>Advertising & Tracking IDs</strong><br /><small class="mono dim">Advertising IDs, cross-app tracking</small></td>
+            <td><span class="legal-badge-pill legal-badge-pill--forbidden">Never Used</span></td>
+            <td>No advertising frameworks, tracking cookies, or tracking pixels are present in the app or website.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3. Technical Operation & System Interactions</h2>
+      <p>
+        Because Nocturne is an interactive desktop companion that responds when your workstation falls quiet in the late hours, we explain exactly what OS APIs it calls:
+      </p>
+
+      <h3>A. Aggregate Idle Time Counters (No Keylogging)</h3>
+      <p>
+        To know when to trigger ambient manifestations, Nocturne must know whether you are actively using your computer. It accomplishes this solely by querying aggregate operating system idle counters:
+      </p>
+      <ul>
+        <li><strong>Windows:</strong> <code>GetLastInputInfo</code> (Win32 user32 API)</li>
+        <li><strong>macOS:</strong> <code>CGEventSourceSecondsSinceLastEventType</code> (CoreGraphics API)</li>
+        <li><strong>Linux:</strong> <code>XScreenSaverQueryInfo</code> (libXss / X11)</li>
+      </ul>
+      <p>
+        <strong>Privacy Guarantee:</strong> These OS counters provide only a single aggregate number: <em>how many seconds or milliseconds have elapsed since any generic hardware input was registered</em>. They <strong>cannot</strong> read what you typed, what you clicked, which applications you were using, or what appeared on your screen.
+      </p>
+
+      <h3>B. Emergency Panic Failsafe (Triple-ESC Purge)</h3>
+      <p>
+        Nocturne provides an instant hardware failsafe allowing you to tap <kbd>ESC</kbd> three times rapidly to immediately silence audio, reset display color temperatures, and disengage background processing.
+      </p>
+      <p>
+        <strong>Privacy Guarantee:</strong> The emergency failsafe hook filters exclusively for keycode <code>0x1B</code> (the standard Escape key) within an ephemeral in-memory 3-slot monotonic ringbuffer. Every other keystroke is immediately ignored and discarded unread without being buffered, logged, or analyzed.
+      </p>
+
+      <h3>C. Display Color Ramp Adjustments</h3>
+      <p>
+        During subtle manifestation phases, Nocturne gently adjusts monitor color-temperature ramps using native operating system gamma lookup tables (Windows GDI <code>SetDeviceGammaRamp</code> / macOS CoreGraphics display tables).
+      </p>
+      <p>
+        <strong>Privacy Guarantee:</strong> These are strictly outbound hardware LUT commands clamped to safe luminance thresholds (&le; 8% delta). Nocturne never reads pixels from your screen, captures window bitmaps, or records display content.
+      </p>
+
+      <h3>D. Real-Time Procedural Audio DSP</h3>
+      <p>
+        Nocturne produces binaural sound phenomena (such as floorboard creaks, CRT hums, and spirit-box whispers) via mathematically generated oscillators running at 48 kHz stereo in pure Rust.
+      </p>
+      <p>
+        <strong>Privacy Guarantee:</strong> No pre-recorded media files are downloaded from the web, and no audio input device is ever accessed.
+      </p>
+
+      <h2>4. Local-First Storage & Data Retention</h2>
+      <p>
+        Nocturne stores minimal operational records entirely on your local machine:
+      </p>
+      <ul>
+        <li>
+          <strong>Simulation Incident Log (<code>nocturne_telemetry.db</code>):</strong>
+          Contains purely simulated event records (e.g., timestamps of triggered sound phenomena, simulated EMF milligauss levels, simulated cold-spot temperatures, and session start/end).
+        </li>
+        <li>
+          <strong>File Locations:</strong>
+          <ul>
+            <li><strong>Windows:</strong> <code>%LOCALAPPDATA%\com.nocturne.app\nocturne_telemetry.db</code></li>
+            <li><strong>macOS:</strong> <code>~/Library/Application Support/com.nocturne.app/nocturne_telemetry.db</code></li>
+            <li><strong>Linux:</strong> <code>~/.config/nocturne/nocturne_telemetry.db</code></li>
+          </ul>
+        </li>
+        <li>
+          <strong>Rolling Cap:</strong>
+          The local database enforces a rolling cap of 10,000 incident rows; older records are automatically pruned.
+        </li>
+        <li>
+          <strong>Access Permissions:</strong>
+          On Unix systems, files are created with <code>0600</code> permissions (accessible only by the active user account) and directories with <code>0700</code>.
+        </li>
+      </ul>
+
+      <div class="legal-callout">
+        <p style="margin: 0; color: var(--bone);">
+          <strong>How to Delete Your Data:</strong> You can purge all stored records at any time simply by deleting the <code>nocturne_telemetry.db</code> file or uninstalling the application. Because zero data is ever uploaded to our servers, local deletion is immediate, complete, and permanent.
+        </p>
+      </div>
+
+      <h2>5. Air-Gap Architecture & Zero Network Egress</h2>
+      <p>
+        Nocturne enforces an uncompromised air gap:
+      </p>
+      <ul>
+        <li><strong>Prohibited Dependencies:</strong> HTTP and network client crates (including <code>reqwest</code>, <code>hyper</code>, <code>curl</code>, <code>ureq</code>, <code>openssl</code>, <code>rustls</code>, and <code>tauri-plugin-http</code>) are explicitly banned in <code>deny.toml</code> and verified on every commit.</li>
+        <li><strong>Runtime Socket Scrubber:</strong> The <code>AirGapEnforcer</code> routine checks open POSIX file descriptors at startup to ensure zero <code>AF_INET</code> or <code>AF_INET6</code> network sockets are instantiated.</li>
+        <li><strong>Strict Content Security Policy:</strong> The user interface is locked down with <code>default-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'</code>.</li>
+        <li><strong>OS Sandboxing:</strong> On macOS, Nocturne executes inside an isolated Apple Seatbelt profile (<code>nocturne-airgap.sb</code>) that categorically denies network operations.</li>
+      </ul>
+
+      <h2>6. Website Privacy & Hosting</h2>
+      <p>
+        The project website (<code>https://boredpolymath.github.io/nocturne/</code>) is hosted via GitHub Pages (operated by GitHub, Inc. / Microsoft Corporation):
+      </p>
+      <ul>
+        <li>We run <strong>no third-party tracking scripts</strong>, no marketing beacons, and no Google Analytics.</li>
+        <li>All fonts, styles, scripts, and audio synthesizers are served locally from the repository.</li>
+        <li>The website header enforces <code>connect-src 'none'</code> via Content Security Policy.</li>
+        <li>GitHub may collect standard technical web server access logs (such as IP address and user-agent) necessary to serve the web files securely and protect against DDoS attacks, governed by the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</li>
+      </ul>
+
+      <h2>7. Children's Privacy</h2>
+      <p>
+        Nocturne is an ambient entertainment novelty and does not knowingly collect, request, or retain personal data from children under the age of 13 (or under 16 within the European Economic Area), in compliance with the Children’s Online Privacy Protection Act (COPPA) and GDPR Article 8.
+      </p>
+
+      <h2>8. Your Rights Under GDPR and CCPA / CPRA</h2>
+      <p>
+        Under regulations such as the European General Data Protection Regulation (GDPR) and the California Consumer Privacy Act / California Privacy Rights Act (CCPA/CPRA), users possess rights to access, rectify, port, and delete their personal data.
+      </p>
+      <p>
+        Because Nocturne <strong>never collects, transmits, or possesses your personal data</strong>, we hold no user data on remote servers to provide, correct, or delete. You retain 100% unilateral custody and control over your local machine and can delete the local SQLite database at any time.
+      </p>
+
+      <h2>9. Open Source Transparency & Integrity</h2>
+      <p>
+        We believe privacy guarantees must be verifiable:
+      </p>
+      <ul>
+        <li>Nocturne’s entire source code is publicly accessible on GitHub under open-source licenses (MIT OR Apache-2.0).</li>
+        <li>Every production build is generated via deterministic GitHub Actions workflows with published CycloneDX 1.5 Software Bill of Materials (SBOM) and SHA-256 verification hashes.</li>
+        <li>You can inspect and verify our supply-chain audit policies directly in <a href="https://github.com/boredpolymath/nocturne/blob/main/deny.toml" target="_blank" rel="noopener">deny.toml</a> and <a href="https://github.com/boredpolymath/nocturne/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a>.</li>
+      </ul>
+
+      <h2>10. Contact & Inquiries</h2>
+      <p>
+        If you have questions, comments, or feedback regarding this Privacy Policy or our software privacy architecture, please contact us through our official project channels:
+      </p>
+      <ul>
+        <li><strong>Public Issue Tracker:</strong> <a href="https://github.com/boredpolymath/nocturne/issues" target="_blank" rel="noopener">https://github.com/boredpolymath/nocturne/issues</a></li>
+        <li><strong>Private Security Advisories:</strong> <a href="https://github.com/boredpolymath/nocturne/security/advisories/new" target="_blank" rel="noopener">https://github.com/boredpolymath/nocturne/security/advisories/new</a></li>
+        <li><strong>Publisher / Maintainer:</strong> boredpolymath</li>
+      </ul>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer__line">
+      Nocturne MK-IV · Air-Gapped Paranormal Telemetry Unit
+    </p>
+    <p class="mono small dim">
+      <a href="index.html">Home</a> ·
+      <a href="privacy.html" style="color: var(--phosphor);">Privacy Policy</a> ·
+      <a href="https://github.com/boredpolymath/nocturne" rel="noopener">GitHub Repository</a> ·
+      <a href="https://github.com/boredpolymath/nocturne/blob/main/SECURITY.md" rel="noopener">Security Policy</a>
+    </p>
+    <p class="mono small dim">Press <kbd>ESC</kbd> <kbd>ESC</kbd> <kbd>ESC</kbd> at any time.</p>
+  </footer>
+</body>
+</html>

@@ -12,7 +12,7 @@
 
 ![Project Nocturne MK-IV — Paranormal Telemetry Unit](assets/readme-thumbnail-1.png)
 
-[**Interactive Web Demo**](https://boredpolymath.github.io/nocturne/) · [**Download Binaries**](#-install--summon) · [**How It Works**](#-what-happens-in-the-silence) · [**Privacy & Safety**](#-privacy--safety-guarantees) · [**Build & Contribute**](#-contributing--hacking-on-nocturne)
+[**Interactive Web Demo**](https://boredpolymath.github.io/nocturne/) · [**Download Binaries**](#-install--summon) · [**How It Works**](#-what-happens-in-the-silence) · [**Privacy Policy**](PRIVACY.md) · [**Build & Contribute**](#-contributing--hacking-on-nocturne)
 
 </div>
 
@@ -84,6 +84,8 @@ Every sample passes through a hard psychoacoustic limiter (`+6 dB` to `+18 dB` o
 ---
 
 ## Privacy & Safety Guarantees
+
+> For our complete, legally binding compliance disclosures, see our standalone [**Privacy Policy**](PRIVACY.md) or read it online at [**boredpolymath.github.io/nocturne/privacy.html**](https://boredpolymath.github.io/nocturne/privacy.html).
 
 A daemon that watches for user inactivity and touches hardware display tables must be uncompromisingly trustworthy:
 

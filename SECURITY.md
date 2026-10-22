@@ -1,6 +1,6 @@
 # Security Policy
 
-Project Nocturne (`MK-IV`) is engineered from the ground up as a **local-first, zero-egress (air-gapped)** desktop daemon with strict privacy and hardware restoration guarantees.
+Project Nocturne (`MK-IV`) is engineered from the ground up as a **local-first, zero-egress (air-gapped)** desktop daemon with strict privacy and hardware restoration guarantees. For our compliance disclosures and data handling policies, see our standalone [**Privacy Policy**](PRIVACY.md) or visit [**boredpolymath.github.io/nocturne/privacy.html**](https://boredpolymath.github.io/nocturne/privacy.html).
 
 ---
 
